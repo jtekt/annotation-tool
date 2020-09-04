@@ -17,7 +17,7 @@
         <input type="radio" v-model="item.annotation" value="NG" :disabled="processing">
         <span v-if="success && item.annotation === 'NG'">✅</span>
       </div>
-    
+
 
 
 
@@ -64,6 +64,9 @@ export default {
     image_src() {
       return `${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/images/${this.$route.params.collection}/${this.item.image}`
     },
+    annotation(){
+      return this.item.annotation
+    }
 
   },
   watch: {
@@ -85,7 +88,7 @@ export default {
 }
 
 img {
-  width: 25vw;
+  width: 15vw;
   transition: 0.25s;
   cursor: zoom-in;
 }
@@ -97,5 +100,6 @@ img.zoomed {
 
 .controls_wrapper {
   margin: 1em;
+  font-size: 120%;
 }
 </style>
