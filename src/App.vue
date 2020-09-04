@@ -1,10 +1,31 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <nav>
+      <router-link :to="{ name: 'home', params: {} }">
+        Collections
+      </router-link>
+
+      <template v-if="$route.params.collection">
+        <span>></span>
+        <router-link :to="{ name: 'collection', params: {collection: $route.params.collection} }">
+          {{$route.params.collection}}
+        </router-link>
+      </template>
+
+      <template v-if="$route.params.entry_id">
+        <span>></span>
+        <span>
+          {{$route.params.entry_id}}
+        </span>
+      </template>
+
+      <div class="spacer"/>
+
+
+    </nav>
+    <main>
+      <router-view/>
+    </main>
   </div>
 </template>
 
@@ -13,20 +34,51 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+body {
+  margin: 0;
 }
 
-#nav a {
+nav {
+  background-color: #444444;
+  color: white;
+  padding: 1em 1em;
   font-weight: bold;
-  color: #2c3e50;
+  display: flex;
+  align-items: center;
+}
+nav a {
+  color: currentColor;
+  text-decoration: none;
+
+
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+nav a:hover {
+  color: #dddddd;
+}
+
+nav > * {
+  margin-right: 0.5em;
+}
+
+
+main {
+  margin: 0 1em;
+  text-align: center;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.loader_container {
+  text-align: center;
+  font-size: 200%;
+}
+
+.about {
+  font-size: 120%;
 }
 </style>
