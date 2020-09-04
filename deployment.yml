@@ -26,7 +26,7 @@ metadata:
 spec:
   ports:
   - port: 80
-    nodePort: 31222
+    nodePort: 31223
   selector:
     app: ${APPLICATION_NAME}
   type: NodePort
