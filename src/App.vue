@@ -1,5 +1,11 @@
 <template>
   <div id="app">
+    <header>
+      <div class="application_title">
+        Annotation tool
+      </div>
+    </header>
+
     <nav>
       <router-link :to="{ name: 'home', params: {} }">
         Collections
@@ -23,27 +29,48 @@
 
 
     </nav>
+
     <main>
       <router-view/>
     </main>
+
+    <footer>
+      Annotation tool, Maxime MOREILLON
+    </footer>
   </div>
 </template>
 
 <style>
+body {
+  margin: 0;
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
-body {
-  margin: 0;
-}
 
-nav {
+
+
+header {
+  font-size: 120%;
   background-color: #444444;
   color: white;
-  padding: 1em 1em;
+  padding: 15px;
+}
+
+
+nav {
+  padding: 15px;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -56,16 +83,25 @@ nav a {
 }
 
 nav a:hover {
-  color: #dddddd;
+  color: #c00000;
 }
 
 nav > * {
-  margin-right: 0.5em;
+  margin-right: 15px;
 }
 
 
 main {
-  margin: 0 1em;
+  flex-grow: 1;
+  margin: 0 15px;
+}
+
+footer {
+  margin-top: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  border-top: 1px solid #dddddd;
+  padding: 1em;
   text-align: center;
 }
 

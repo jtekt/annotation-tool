@@ -1,24 +1,31 @@
 <template>
-  <div class="collection_item">
+  <div
+    class="collection_item">
+
     <img
       :class="{zoomed: zoomed}"
       :src="image_src"
       @click="zoomed = !zoomed">
+
     <div class="controls_wrapper">
 
+      <div
+        class="control"
+        v-for="label in labels"
+        v-bind:key="label">
 
-      <div class="">
-        <label>OK</label>
-        <input type="radio" v-model="item.annotation" value="OK" :disabled="processing">
-        <span v-if="success && item.annotation === 'OK'">✅</span>
+        <input
+          type="radio"
+          v-model="item.annotation"
+          :value="label"
+          :disabled="processing">
+
+        <label
+          @click="$set(item,'annotation',label)"
+          >{{label}}</label>
+
+
       </div>
-      <div class="">
-        <label>NG</label>
-        <input type="radio" v-model="item.annotation" value="NG" :disabled="processing">
-        <span v-if="success && item.annotation === 'NG'">✅</span>
-      </div>
-
-
 
 
     </div>
@@ -35,10 +42,24 @@ export default {
     return {
       zoomed: false,
       processing: false,
-      success: false,
+      labels: ['OK', 'NG'],
     }
   },
+  mounted(){
+    this.parse_labels_from_env()
+  },
   methods: {
+    parse_labels_from_env(){
+      if(!process.env.VUE_APP_LABELS) return
+
+      try {
+        this.labels=JSON.parse(process.env.VUE_APP_LABELS)
+      }
+      catch (e) {
+        console.error(e)
+        return
+      }
+    },
     update_item(){
       this.processing = true
       let api_url = process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
@@ -48,8 +69,7 @@ export default {
 
       this.axios.put(url, this.item)
       .then( () => {
-        this.success=true
-        setTimeout(()=>{this.success=false},3000)
+
       })
       .catch(error =>{
         alert(error)
@@ -80,26 +100,62 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .collection_item {
+
+  background-color: white;
   margin: 1em;
   padding: 1em;
-}
-.collection_item:not(:last-child) {
-  border-bottom: 1px solid #dddddd;
+
+  font-size: 150%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+
+
 }
 
-img {
-  width: 15vw;
-  transition: 0.25s;
-  cursor: zoom-in;
-}
-
-img.zoomed {
-  cursor: zoom-out;
+.collection_item.zoomed {
   width: 90%;
 }
 
+
+img {
+  width: 15vw;
+  cursor: zoom-in;
+  transition: 0.25s;
+}
+
+img.zoomed {
+  width: 80vw;
+  cursor: zoom-out;
+}
+
 .controls_wrapper {
-  margin: 1em;
-  font-size: 120%;
+  margin-top: 1em;
+}
+
+.control {
+
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.control:not(:first-child) {
+  margin-top: 0.5em;
+}
+
+
+.success {
+  position: absolute;
+  left: 120%;
+  width: 200px;
+  color: #00c000;
+}
+
+label {
+  cursor: pointer;
 }
 </style>

@@ -18,16 +18,19 @@
     <template v-else>
 
       <template v-if="collection.length > 0">
-        <transition-group name="flip-list" tag="div">
+        <div class="items_container">
+          <transition-group name="flip-list" tag="div">
 
-            <CollectionItem
-              v-for="doc in sorted_items"
-              :key="doc._id"
-              :item="doc"
-              @annotation="update_item($event, doc)"/>
+              <CollectionItem
+                v-for="doc in sorted_items"
+                :key="doc._id"
+                :item="doc"
+                @annotation="update_item($event, doc)"/>
 
 
-        </transition-group>
+          </transition-group>
+        </div>
+
       </template>
 
 
@@ -109,12 +112,11 @@ export default {
   computed: {
     sorted_items(){
       return this.collection.slice().sort((a, b) => {
-        if(a.annotation && !b.annotation) return -1
-        if(b.annotation && !a.annotation) return -1
-        if(a.annotation < b.annotation) return -1
-        if(a.annotation > b.annotation) return 1
-        return 0;
-
+        if(a.annotation && !b.annotation) return 1
+        else if(b.annotation && !a.annotation) return -1
+        else if(a.annotation < b.annotation) return -1
+        else if(a.annotation > b.annotation) return 1
+        else return 0
       })
     }
   }
@@ -126,5 +128,16 @@ export default {
   transition: transform 1s;
 }
 
+.items_container {
+
+}
+
+.items_container > div {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
 </style>
