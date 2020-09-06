@@ -35,7 +35,17 @@
     </main>
 
     <footer>
-      Annotation tool, Maxime MOREILLON
+      <img src="@/assets/logo.png" alt="">
+      <div class="">
+        <div class="">
+          Annotation tool
+        </div>
+        <div class="">
+          Maxime MOREILLON
+        </div>
+
+      </div>
+
     </footer>
   </div>
 </template>
@@ -62,7 +72,7 @@ body {
 
 
 header {
-  font-size: 120%;
+  font-size: 150%;
   background-color: #444444;
   color: white;
   padding: 15px;
@@ -74,6 +84,7 @@ nav {
   font-weight: bold;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid #dddddd;
 }
 nav a {
   color: currentColor;
@@ -116,5 +127,28 @@ footer {
 
 .about {
   font-size: 120%;
+}
+
+.error {
+  color: #c00000;
+}
+
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+footer img {
+  width: 2em;
+  height: 2em;
+}
+
+footer > div {
+  margin-left: 0.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 </style>

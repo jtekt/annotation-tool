@@ -3,6 +3,7 @@
     class="collection_item">
 
     <img
+      :style="{width: `${size}vw`}"
       :class="{zoomed: zoomed}"
       :src="image_src"
       @click="zoomed = !zoomed">
@@ -21,10 +22,15 @@
           :disabled="processing">
 
         <label
-          @click="$set(item,'annotation',label)"
-          >{{label}}</label>
+          @click="$set(item,'annotation',label)">
+          {{label}}
+        </label>
 
 
+      </div>
+
+      <div class="control">
+        <button type="button" @click="delete_annotation()">Delete annotation</button>
       </div>
 
 
@@ -36,7 +42,8 @@
 export default {
   name: 'CollectionItem',
   props: {
-    item: Object
+    item: Object,
+    size: Number,
   },
   data() {
     return {
@@ -69,16 +76,18 @@ export default {
 
       this.axios.put(url, this.item)
       .then( () => {
-
+        // Nothing
       })
       .catch(error =>{
         alert(error)
       })
       .finally(() => {this.processing = false})
     },
-    annotate(annotation){
-      this.$emit('annotation',annotation)
+    delete_annotation(){
+      this.item.annotation = undefined
     }
+
+
   },
   computed: {
     image_src() {
@@ -122,13 +131,13 @@ export default {
 
 
 img {
-  width: 15vw;
+
   cursor: zoom-in;
   transition: 0.25s;
 }
 
 img.zoomed {
-  width: 80vw;
+  width: 80vw !important;
   cursor: zoom-out;
 }
 

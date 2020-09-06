@@ -3,6 +3,11 @@
 
     <h1>{{$route.params.collection}}</h1>
 
+    <div class="size_adjustment_controls">
+      <label>Image size:</label>
+      <input type="range" min="5" max="80" v-model="image_size">
+    </div>
+
     <div
       class="error"
       v-if="collection.error">
@@ -25,6 +30,7 @@
                 v-for="doc in sorted_items"
                 :key="doc._id"
                 :item="doc"
+                :size="image_size"
                 @annotation="update_item($event, doc)"/>
 
 
@@ -61,6 +67,7 @@ export default {
   data(){
     return {
       collection: [],
+      image_size: 10,
       api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
     }
   },
@@ -125,7 +132,7 @@ export default {
 
 <style scoped>
 .flip-list-move {
-  transition: transform 1s;
+  transition: transform 0.75s;
 }
 
 .items_container {
@@ -140,4 +147,12 @@ export default {
   justify-content: center;
 }
 
+.size_adjustment_controls {
+  display: flex;
+  align-items: center;
+}
+
+.size_adjustment_controls > label {
+  margin-right: 0.5em;
+}
 </style>
