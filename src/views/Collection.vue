@@ -67,7 +67,7 @@ export default {
   data(){
     return {
       collection: [],
-      image_size: 10,
+      image_size: "10",
       api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
     }
   },

@@ -8,8 +8,31 @@
       :src="image_src"
       @click="zoomed = !zoomed">
 
+    <div class="current_annotation">
+      {{item.annotation || 'Not annotated'}}
+    </div>
+
+
+
     <div class="controls_wrapper">
 
+      <button
+        type="button"
+        v-for="label in labels"
+        v-bind:key="label"
+        :disabled="processing"
+        @click="item.annotation = label">
+        {{label}}
+      </button>
+
+      <button
+        type="button"
+        @click="item.annotation = undefined"
+        :disabled="processing">
+        None
+      </button>
+
+      <!--
       <div
         class="control"
         v-for="label in labels"
@@ -26,11 +49,12 @@
           {{label}}
         </label>
 
-
       </div>
 
+      -->
+
       <div class="control">
-        <button type="button" @click="delete_annotation()">Delete annotation</button>
+
       </div>
 
 
@@ -43,7 +67,7 @@ export default {
   name: 'CollectionItem',
   props: {
     item: Object,
-    size: Number,
+    size: String,
   },
   data() {
     return {
@@ -83,9 +107,6 @@ export default {
       })
       .finally(() => {this.processing = false})
     },
-    delete_annotation(){
-      this.item.annotation = undefined
-    }
 
 
   },
@@ -112,7 +133,6 @@ export default {
 
   background-color: white;
   margin: 1em;
-  padding: 1em;
 
   font-size: 150%;
   display: flex;
@@ -129,11 +149,14 @@ export default {
   width: 90%;
 }
 
+.collection_item > * {
+}
+
 
 img {
-
   cursor: zoom-in;
   transition: 0.25s;
+  margin: 1em;
 }
 
 img.zoomed {
@@ -141,30 +164,25 @@ img.zoomed {
   cursor: zoom-out;
 }
 
+
 .controls_wrapper {
-  margin-top: 1em;
-}
-
-.control {
-
-  position: relative;
+  width: 100%;
+  margin: 1em;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.control:not(:first-child) {
-  margin-top: 0.5em;
+.current_annotation {
+  margin: 0 1em;
+}
+
+.controls_wrapper button {
+  padding: 0.5em;
+  margin: 0.5em 1em ;
 }
 
 
-.success {
-  position: absolute;
-  left: 120%;
-  width: 200px;
-  color: #00c000;
-}
 
-label {
-  cursor: pointer;
-}
+
 </style>
