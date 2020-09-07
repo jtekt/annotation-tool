@@ -5,7 +5,7 @@
 
     <div class="size_adjustment_controls">
       <label>Image size:</label>
-      <input type="range" min="5" max="80" v-model="image_size">
+      <input type="range" min="15" max="80" v-model="image_size">
     </div>
 
     <div
@@ -67,7 +67,7 @@ export default {
   data(){
     return {
       collection: [],
-      image_size: "10",
+      image_size: "15",
       api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
     }
   },

@@ -21,13 +21,13 @@
         v-for="label in labels"
         v-bind:key="label"
         :disabled="processing"
-        @click="item.annotation = label">
+        @click="annotate(label)">
         {{label}}
       </button>
 
       <button
         type="button"
-        @click="item.annotation = undefined"
+        @click="annotate(undefined)"
         :disabled="processing">
         None
       </button>
@@ -82,6 +82,9 @@ export default {
       })
       .finally(() => {this.processing = false})
     },
+    annotate(label){
+      this.$set(this.item,'annotation',label)
+    }
 
 
   },
