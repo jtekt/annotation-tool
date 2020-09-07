@@ -32,31 +32,6 @@
         None
       </button>
 
-      <!--
-      <div
-        class="control"
-        v-for="label in labels"
-        v-bind:key="label">
-
-        <input
-          type="radio"
-          v-model="item.annotation"
-          :value="label"
-          :disabled="processing">
-
-        <label
-          @click="$set(item,'annotation',label)">
-          {{label}}
-        </label>
-
-      </div>
-
-      -->
-
-      <div class="control">
-
-      </div>
-
 
     </div>
   </div>
