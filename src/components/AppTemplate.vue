@@ -35,6 +35,14 @@
 
       </template>
 
+      <div class="spacer"/>
+
+      <router-link :to="{ name: 'about' }">
+        <InformationOutlineIcon />
+        <span>Info</span>
+      </router-link>
+
+
 
     </nav>
 
@@ -62,12 +70,14 @@
 import 'vue-material-design-icons/styles.css';
 import AppsIcon from 'vue-material-design-icons/Apps.vue';
 import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue';
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue';
 
 export default {
   name: 'AppTemplate',
   components: {
     AppsIcon,
     ChevronRightIcon,
+    InformationOutlineIcon,
   },
   props: {
     application_name: String,
@@ -136,9 +146,19 @@ nav {
 nav a {
   color: currentColor;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+nav a > *:not(:last-child) {
+  margin-right: 0.25em;
 }
 
 nav a:hover:not(.router-link-exact-active) {
+  color: #c00000;
+}
+
+nav a.router-link-exact-active {
   color: #c00000;
 }
 

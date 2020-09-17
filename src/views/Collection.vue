@@ -84,7 +84,7 @@ export default {
     return {
       collection: [],
       image_size: "20",
-      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL
+      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL
     }
   },
   mounted(){
