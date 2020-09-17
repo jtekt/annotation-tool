@@ -2,8 +2,14 @@
   <div id="app">
     <header>
       <div class="application_title">
-        Annotation tool
+        {{application_name}}
       </div>
+      <div class="spacer"/>
+      <a
+        v-if="homepage_url"
+        :href="homepage_url">
+        <AppsIcon />
+      </a>
     </header>
 
     <nav>
@@ -38,7 +44,7 @@
       <img src="@/assets/logo.png" alt="">
       <div class="">
         <div class="">
-          Annotation tool
+          {{application_name}}
         </div>
         <div class="">
           Maxime MOREILLON
@@ -49,6 +55,25 @@
     </footer>
   </div>
 </template>
+
+<script>
+import 'vue-material-design-icons/styles.css';
+import AppsIcon from 'vue-material-design-icons/Apps.vue';
+
+export default {
+  name: 'App',
+  components: {
+    AppsIcon,
+  },
+  data() {
+    return {
+      homepage_url: process.env.VUE_APP_HOMEPAGE_URL,
+      application_name: 'Annotation tool'
+    }
+  }
+
+}
+</script>
 
 <style>
 body {
@@ -69,13 +94,22 @@ body {
 }
 
 
-
-
 header {
   font-size: 150%;
   background-color: #444444;
   color: white;
   padding: 15px;
+  display: flex;
+  align-items: center;
+}
+
+header a {
+  color: currentcolor;
+  transition: 0.25s;
+}
+
+header a:hover {
+  color: #c00000;
 }
 
 
@@ -84,13 +118,10 @@ nav {
   font-weight: bold;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #dddddd;
 }
 nav a {
   color: currentColor;
   text-decoration: none;
-
-
 }
 
 nav a:hover {
@@ -113,7 +144,15 @@ footer {
   margin-right: 1em;
   border-top: 1px solid #dddddd;
   padding: 1em;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+footer img {
+  width: 2em;
+  height: 2em;
 }
 
 .spacer {
@@ -125,24 +164,11 @@ footer {
   font-size: 200%;
 }
 
-.about {
-  font-size: 120%;
-}
 
 .error {
   color: #c00000;
 }
 
-
-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-footer img {
-  width: 2em;
-  height: 2em;
-}
 
 footer > div {
   margin-left: 0.5em;
