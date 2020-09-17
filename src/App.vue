@@ -13,11 +13,6 @@ export default {
   components: {
     AppTemplate
   },
-  data() {
-    return {
-      application_name: 'Annotation tool'
-    }
-  }
 
 }
 </script>
