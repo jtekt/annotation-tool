@@ -1,12 +1,8 @@
 <template>
-  <div class="home">
+  <div class="collection">
 
-    <h1>{{$route.params.collection}}</h1>
 
-    <div class="size_adjustment_controls">
-      <label>Image size:</label>
-      <input type="range" min="15" max="80" v-model="image_size">
-    </div>
+
 
     <div
       class="error"
@@ -23,6 +19,22 @@
     <template v-else>
 
       <template v-if="collection.length > 0">
+        <div class="toolbar">
+
+          <div class="">
+            <LabelIcon />
+            <span>{{annotated_items.length}}/{{collection.length}}</span>
+          </div>
+
+
+
+          <div class="size_adjustment_controls">
+
+            <ImageSizeSelectLargeIcon/>
+            <input type="range" min="15" max="80" v-model="image_size">
+          </div>
+        </div>
+
         <div class="items_container">
           <transition-group name="flip-list" tag="div">
 
@@ -55,20 +67,24 @@
 <script>
 // @ is an alias to /src
 import Loader from '@moreillon/vue_loader'
-import XLSX from 'xlsx'
 import CollectionItem from '@/components/CollectionItem.vue'
+
+import ImageSizeSelectLargeIcon from 'vue-material-design-icons/ImageSizeSelectLarge.vue';
+import LabelIcon from 'vue-material-design-icons/Label.vue';
 
 export default {
   name: 'List',
   components: {
     Loader,
-    CollectionItem
+    CollectionItem,
+    ImageSizeSelectLargeIcon,
+    LabelIcon,
   },
   data(){
     return {
       collection: [],
-      image_size: "15",
-      api_url: process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
+      image_size: "20",
+      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL
     }
   },
   mounted(){
@@ -98,22 +114,7 @@ export default {
       .finally(()=>{this.$set(this.collection,'loading',false)})
     },
 
-    export_collection(){
-      var workbook = XLSX.utils.book_new()
-      var ws1 = XLSX.utils.json_to_sheet(this.collection)
-      XLSX.utils.book_append_sheet(workbook, ws1, "Sheet1")
-      XLSX.writeFile(workbook, 'export.xlsx')
-    },
-    drop_collection(){
-      if(!confirm('ホンマに？')) return
-      this.axios.delete(`${this.api_url}/collections/${this.$route.params.collection}`)
-      .then(() => {
-        this.$router.push({name: 'home'})
-      })
-      .catch(error =>{
-        alert(error)
-      })
-    },
+
 
   },
   computed: {
@@ -124,6 +125,11 @@ export default {
         else if(a.annotation < b.annotation) return -1
         else if(a.annotation > b.annotation) return 1
         else return 0
+      })
+    },
+    annotated_items(){
+      return this.collection.filter(item => {
+        return !!item.annotation
       })
     }
   }
@@ -147,12 +153,34 @@ export default {
   justify-content: center;
 }
 
-.size_adjustment_controls {
+.toolbar {
+  margin: 0.5em 0;
+  display: flex;
+  align-items: center;
+  font-size: 150%;
+}
+
+.toolbar > * {
+  margin-right: 1em;
   display: flex;
   align-items: center;
 }
 
+.toolbar > div > *:not(:last-child) {
+  margin-right: 0.25em;
+}
+
+.size_adjustment_controls {
+
+
+
+}
+
+
+
 .size_adjustment_controls > label {
   margin-right: 0.5em;
 }
+
+
 </style>

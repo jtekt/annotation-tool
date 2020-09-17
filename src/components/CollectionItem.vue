@@ -8,9 +8,12 @@
       :src="image_src"
       @click="zoomed = !zoomed">
 
-    <div class="current_annotation">
-      {{item.annotation || 'Not annotated'}}
+    <div
+      class="current_annotation">
+      <span v-if="item.annotation">{{item.annotation}}</span>
+      <LabelOffIcon v-else/>
     </div>
+
 
 
 
@@ -29,7 +32,7 @@
         type="button"
         @click="annotate(undefined)"
         :disabled="processing">
-        None
+        <LabelOffIcon />
       </button>
 
 
@@ -38,14 +41,22 @@
 </template>
 
 <script>
+
+import LabelOffIcon from 'vue-material-design-icons/LabelOff.vue'
+
+
 export default {
   name: 'CollectionItem',
   props: {
     item: Object,
     size: String,
   },
+  components: {
+    LabelOffIcon
+  },
   data() {
     return {
+      api_url: process.env.VUE_APP_STORAGE_SERVICVE_API_URL,
       zoomed: false,
       processing: false,
       labels: ['OK', 'NG'],
@@ -68,10 +79,10 @@ export default {
     },
     update_item(){
       this.processing = true
-      let api_url = process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL
+
       let collection = this.$route.params.collection
       let entry_id = this.item._id
-      let url = `${api_url}/collections/${collection}/${entry_id}`
+      let url = `${this.api_url}/collections/${collection}/${entry_id}`
 
       this.axios.put(url, this.item)
       .then( () => {
@@ -90,7 +101,7 @@ export default {
   },
   computed: {
     image_src() {
-      return `${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/images/${this.$route.params.collection}/${this.item.image}`
+      return `${this.api_url}/images/${this.$route.params.collection}/${this.item.image}`
     },
     annotation(){
       return this.item.annotation
@@ -112,7 +123,6 @@ export default {
   background-color: white;
   margin: 1em;
 
-  font-size: 150%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -152,12 +162,14 @@ img.zoomed {
 }
 
 .current_annotation {
-  margin: 0 1em;
+  margin-top: 1em;
+  font-size: 150%;
 }
 
 .controls_wrapper button {
   padding: 0.5em;
-  margin: 0.5em 1em ;
+  margin: 0.5em 1em;
+  font-size: 100%;
 }
 
 

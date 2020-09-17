@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <h1>Collections</h1>
-
     <div class="error" v-if="collections.error">
       Error loading collections
     </div>
@@ -25,7 +23,9 @@
       </li>
     </ul>
 
-    <div class="" v-else-if="collections.length < 1">
+    <div
+      class=""
+      v-else-if="collections.length < 1">
       No collections available
     </div>
 
@@ -53,7 +53,7 @@ export default {
   methods: {
     get_collections() {
       this.$set(this.collections,'loading',true)
-      this.axios.get(`${process.env.VUE_APP_TOKUSHIMA_STORAGE_API_URL}/collections`)
+      this.axios.get(`${process.env.VUE_APP_STORAGE_SERVICVE_API_URL}/collections`)
       .then(response => {
         this.collections = []
         response.data.forEach((doc) => {
@@ -73,9 +73,15 @@ export default {
 
 <style scoped>
 
+.home {
+
+}
+
+li {
+  margin: 0.5em 0;
+}
 .collection {
-  display: flex;
-  padding: 0.25em 0;
+  ;
   color: #c00000;
   text-decoration: none;
   font-weight: bold;
