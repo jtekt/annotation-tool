@@ -13,6 +13,9 @@ export default {
   components: {
     AppTemplate
   },
+  mounted(){
+    this.$store.commit('parse_labels_from_env')
+  }
 
 }
 </script>

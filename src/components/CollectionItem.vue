@@ -21,7 +21,7 @@
 
       <button
         type="button"
-        v-for="label in labels"
+        v-for="label in $store.state.labels"
         v-bind:key="label"
         :disabled="processing"
         @click="annotate(label)">
