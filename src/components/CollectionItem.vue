@@ -73,7 +73,6 @@ export default {
         this.labels=JSON.parse(process.env.VUE_APP_LABELS)
       }
       catch (e) {
-        console.error(e)
         return
       }
     },
