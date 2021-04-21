@@ -13,12 +13,12 @@
     <ul v-else-if="collections.length > 0">
       <li
         v-for="collection in collections"
-        :key="collection.name">
+        :key="collection">
         <router-link
           class="collection"
 
-          :to="{ name: 'collection', params: {collection: collection.name} }">
-          {{collection.name}}
+          :to="{ name: 'collection', params: {collection} }">
+          {{collection}}
         </router-link>
       </li>
     </ul>
@@ -54,12 +54,7 @@ export default {
     get_collections() {
       this.$set(this.collections,'loading',true)
       this.axios.get(`${process.env.VUE_APP_STORAGE_SERVICE_API_URL}/collections`)
-      .then(response => {
-        this.collections = []
-        response.data.forEach((doc) => {
-          this.collections.push(doc)
-        });
-      })
+      .then( ({data}) => { this.collections = data })
       .catch(error =>{
         this.$set(this.collections,'error',true)
         if(error.response) console.log(error.response.data)

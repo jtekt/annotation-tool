@@ -81,7 +81,7 @@ export default {
 
       let collection = this.$route.params.collection
       let entry_id = this.item._id
-      let url = `${this.api_url}/collections/${collection}/${entry_id}`
+      let url = `${this.api_url}/collections/${collection}/images/${entry_id}`
 
       this.axios.put(url, this.item)
       .then( () => {
