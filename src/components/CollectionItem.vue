@@ -79,9 +79,9 @@ export default {
     update_item(){
       this.processing = true
 
-      let collection = this.$route.params.collection
-      let entry_id = this.item._id
-      let url = `${this.api_url}/collections/${collection}/images/${entry_id}`
+      const collection = this.$route.params.collection
+      const entry_id = this.item._id
+      const url = `${this.api_url}/collections/${collection}/images/${entry_id}`
 
       this.axios.put(url, this.item)
       .then( () => {
@@ -100,7 +100,7 @@ export default {
   },
   computed: {
     image_src() {
-      return `${this.api_url}/images/${this.$route.params.collection}/${this.item.image}`
+      return `${this.api_url}/collections/${this.$route.params.collection}/images/${this.item._id}/image`
     },
     annotation(){
       return this.item.annotation

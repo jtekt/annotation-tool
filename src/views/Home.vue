@@ -16,7 +16,6 @@
         :key="collection">
         <router-link
           class="collection"
-
           :to="{ name: 'collection', params: {collection} }">
           {{collection}}
         </router-link>
