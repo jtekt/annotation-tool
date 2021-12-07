@@ -1,0 +1,26 @@
+stages:
+  - build
+
+variables:
+  APPLICATION_NAME: annotation-tool-mongoose
+  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+
+build:
+  stage: build
+  tags:
+    - "x86"
+  script:
+    - >
+      echo "${DOCKER_HUB_PASSWORD}"
+      | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    # Building image
+    - docker build -t ${CONTAINER_IMAGE} .
+    # Tagging image for Docker Hub
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB}
+    # Pushing images
+    - docker push ${CONTAINER_IMAGE}
+    - docker push ${CONTAINER_IMAGE_DOCKER_HUB}
+    # Cleanup
+    - docker image rm ${CONTAINER_IMAGE}
+    - docker image rm ${CONTAINER_IMAGE_DOCKER_HUB}
