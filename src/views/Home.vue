@@ -1,7 +1,5 @@
 <template>
   <v-card>
-
-
     <v-carousel
       v-if="images.length"
       v-model="carrousel_index"
@@ -98,7 +96,9 @@
     },
     computed: {
       labels(){
-        return process.env.VUE_APP_LABELS.split(',')
+        const {VUE_APP_LABELS} = process.env
+        if(!VUE_APP_LABELS) return ['OK','NG']
+        return VUE_APP_LABELS.split(',')
       }
     }
 
