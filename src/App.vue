@@ -40,7 +40,10 @@ export default {
       title: "Annotation tool",
     },
     nav: [
-      {title: 'Home', to: {name: 'Home'}, icon: 'mdi-home'},
+      // {title: 'Home', to: {name: 'Home'}, icon: 'mdi-home'},
+      {title: 'Items', to: {name: 'items'}, icon: 'mdi-format-list-bulleted'},
+
+      // {title: 'Annotate', to: {name: 'annotate', params: {_id: 'random'}}, icon: 'mdi-tag'},
       {title: 'About', to: {name: 'About'}, icon: 'mdi-information-outline'},
     ]
   }),

@@ -5,6 +5,7 @@
       v-model="carrousel_index"
       height="auto"
       hide-delimiters>
+      
       <v-carousel-item
 
         v-for="(image, index) in images"
@@ -36,10 +37,8 @@
           </v-card-text>
         </v-card>
 
-
-
-
       </v-carousel-item>
+
     </v-carousel>
   </v-card>
 </template>
