@@ -20,9 +20,7 @@ build:
   only:
     - master
   before_script:
-    - >
-      echo "${DOCKER_HUB_PASSWORD}"
-      | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
   script:
 
     # Building image

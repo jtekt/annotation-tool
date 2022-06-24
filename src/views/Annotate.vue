@@ -134,16 +134,16 @@ export default {
       const url = `${this.api_url}/images`
 
       this.axios.get(url,options)
-      .then(({data}) => {
+      .then(({data: {items, total}}) => {
 
-        if(data.length === 0) {
+        if (total === 0) {
           this.snackbar.show = true
           this.snackbar.text = 'No more items'
           return
         }
         
 
-        const {_id} = data[0]
+        const { _id } = items[0]
 
         // Prevent reloading current route
         if(this.document_id !== _id) {
