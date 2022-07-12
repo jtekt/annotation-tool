@@ -38,12 +38,11 @@ export default {
   data: () => ({
     options: {
       title: "Annotation tool",
+      login_url: process.env.VUE_APP_LOGIN_URL,
+      identification_url: process.env.VUE_APP_IDENTIFICATION_URL,
     },
     nav: [
-      // {title: 'Home', to: {name: 'Home'}, icon: 'mdi-home'},
       {title: 'Items', to: {name: 'items'}, icon: 'mdi-format-list-bulleted'},
-
-      // {title: 'Annotate', to: {name: 'annotate', params: {_id: 'random'}}, icon: 'mdi-tag'},
       {title: 'About', to: {name: 'About'}, icon: 'mdi-information-outline'},
     ]
   }),
