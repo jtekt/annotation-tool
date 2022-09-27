@@ -1,12 +1,36 @@
 stages:
-  - containerization
+  - build
+
+services:
+  - name: docker:19.03.12-dind
+    command: ["--insecure-registry=172.16.98.151:5000"]
+
 
 variables:
   APPLICATION_NAME: annotation-tool
+  CONTAINER_TAG: ${CI_COMMIT_SHORT_SHA}
+  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CONTAINER_TAG}
+  CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_DOCKER_HUB_TAGGED: ${CONTAINER_IMAGE_DOCKER_HUB}:${CONTAINER_TAG}
 
-containerization:
-  stage: containerization
+stage: build
+  only:
+    - master
+    - mongoose
+  tags:
+    - dind
+  before_script:
+    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
   script:
-    - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
-    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
-    - docker image rm ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+    # Building image
+    - docker build -t ${CONTAINER_IMAGE} .
+    # Tagging images
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB}
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
+    # Pushing images
+    - docker push ${CONTAINER_IMAGE}
+    - docker push ${CONTAINER_IMAGE_TAGGED}
+    - docker push ${CONTAINER_IMAGE_DOCKER_HUB}
+    - docker push ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
