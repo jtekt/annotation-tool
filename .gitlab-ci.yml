@@ -14,10 +14,10 @@ variables:
   CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
   CONTAINER_IMAGE_DOCKER_HUB_TAGGED: ${CONTAINER_IMAGE_DOCKER_HUB}:${CONTAINER_TAG}
 
-stage: build
+build:
+  stage: build
   only:
     - master
-    - mongoose
   tags:
     - dind
   before_script:
