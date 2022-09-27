@@ -1,10 +1,26 @@
 <template>
-  <div class="about">
-    <h1>Annotation tool</h1>
-    <p>Developed by Maxime MOREILLON</p>
-    <p>Version {{version}}</p>
-    <p>Storage service URL: {{api_url || 'Undefined'}}</p>
-  </div>
+  <v-card>
+    <v-toolbar flat>
+      <v-btn
+        icon
+        exact
+        :to="{name: 'images'}">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <v-toolbar-title>Annotation tool</v-toolbar-title>
+    </v-toolbar>
+
+    <v-card-text>
+      <p>Author: Maxime MOREILLON</p>
+      <v-data-table
+        hide-default-footer
+        :itemsPerPage="-1"
+        :headers="headers"
+        :items="services"/>
+    </v-card-text>
+
+
+  </v-card>
 </template>
 
 <script>
@@ -13,10 +29,46 @@ export default {
   name: 'About',
   data () {
     return {
-      version: pjson.version,
-      shinsei_manager: process.env.VUE_APP_SHINSEI_MANAGER_URL,
-      api_url: process.env.VUE_APP_STORAGE_SERVICE_API_URL
+      headers: [
+        {text: 'Service', value: "name"},
+        {text: 'Version', value: "version"},
+        {text: 'URL', value: "url"},
+
+      ],
+      services: [
+        {
+          name: 'Annotation tool',
+          url: window.location.origin,
+          version: pjson.version
+        },
+        {
+          name: 'Image storage Back-end',
+          url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
+          version: null
+        },
+      ],
     }
   },
+  mounted () {
+    this.get_services_version()
+  },
+  methods: {
+
+    get_services_version () {
+      this.services.forEach((service) => {
+        if (service.version) return
+        service.version = 'Connecting...'
+        this.axios.get(service.url)
+          .then(({ data }) => { service.version = data.version })
+          .catch(() => { service.version = 'Unable to connect' })
+      })
+    }
+  }
+
 }
 </script>
+
+<style scoped>
+
+
+</style>
