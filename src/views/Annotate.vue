@@ -1,60 +1,46 @@
 <template>
   <v-card
     :loading="loading">
-    
+
     <v-toolbar flat>
-      <v-row align="baseline">
+      <v-row align="baseline" justify="space-between">
         <v-col cols="auto">
-          <v-btn 
-            icon
-            @click="get_previous_item_by_date()">
+          <v-btn icon @click="get_previous_item_by_date()">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-col>
-        <v-spacer />
- 
+
+        <v-col v-if="item" cols="auto">
+          {{item.file}}
+        </v-col>
+
+    
         <v-col cols="auto">
-          <v-btn 
-            icon
-            @click="get_next_item_by_date()">
+          <v-btn icon @click="get_next_item_by_date()">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </v-col>
       </v-row>
     </v-toolbar>
-    <v-divider/>
+    <v-divider />
+    
 
     <template v-if="item">
-      <v-card-text>
-
-        <v-img
-          height="400px"
-          contain
-          :src="image_src(item)"
-          alt=""/>
-        
-      </v-card-text>
 
 
       <v-card-text>
 
-        <v-row justify="center">
-          <v-col
-            v-for="(label, index) in labels"
-            :key="`label_${index}`"
-            cols="auto">
-            <v-btn
-              :color="button_color(item, label)"
-              @click="annotate_item(label)">
-              {{label}}
-            </v-btn>
+        <v-row>
+          <v-col cols="10">
+            <v-img contain :src="image_src" alt="" />
           </v-col>
-          <v-col cols="auto">
-            <v-btn 
-              @click="annotate_item(null)">
-              <v-icon>mdi-tag-off</v-icon>
-            </v-btn>
+          <v-col>
+            <v-radio-group v-model="item.data.annotation" @change="annotate_item()">
+              <v-radio label="No annotation" :value="null" />
+              <v-radio v-for="(label, index) in labels" :key="`label_${index}`" :label="label" :value="label" />
+            </v-radio-group>
           </v-col>
+          
 
         </v-row>
       </v-card-text>
@@ -97,8 +83,12 @@ export default {
 
   },
   mounted(){
+    document.addEventListener("keydown", this.handle_keydown)
     if(this.document_id === 'random') this.get_next_unannotated_item()
     else this.get_item_by_id()
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.handle_keydown)
   },
   watch: {
     document_id () {
@@ -107,15 +97,14 @@ export default {
     }
   },
   methods: {
-    image_src({_id}){
-      return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
-    },
+    
     get_item_by_id(){
       this.loading = true
       const url = `${this.api_url}/images/${this.document_id}`
       this.axios.get(url)
         .then(({data}) => {
           this.item = data
+          if(!this.item.data.annotation) this.$set(this.item.data,'annotation',null)
         })
         .catch(error =>{
           this.error = true
@@ -136,7 +125,7 @@ export default {
       this.axios.get(url,options)
       .then(({data: {items, total}}) => {
 
-        if (total === 0) {
+        if (!total) {
           this.snackbar.show = true
           this.snackbar.text = 'No more items'
           return
@@ -176,6 +165,8 @@ export default {
 
       const params = {
         filter: {time: {'$lt' : this.item.time}},
+        sort: 'time',
+        order: -1,
         limit: 1,
       }
 
@@ -185,20 +176,22 @@ export default {
 
       const params = {
         filter: {time: {'$gt' : this.item.time}},
-        sort: {time: 1},
+        sort: 'time',
+        order: 1,
         limit: 1,
       }
 
       this.get_items_with_options({params})
     },
-    delete_annotation(){
-      this.$set(this.item, 'annotation', null)
-    },
-    annotate_item(annotation){
+
+    annotate_item(){
       const url = `${this.api_url}/images/${this.item._id}`
+      const {annotation} = this.item.data
       this.axios.patch(url, {annotation})
-      .then( () => {
+      .then( ({data}) => {
+        this.item = data
         this.get_next_item_by_date()
+        //setTimeout(this.get_next_item_by_date, 500)
       })
       .catch( (error) => {
         console.error(error)
@@ -207,14 +200,36 @@ export default {
         this.loading = false
       })
     },
-    button_color(item, label){
-      if(!item.data || !item.data.annotation) return
-      if(item.data.annotation === label) return 'green'
-    }
+    handle_keydown(e) {
+      // Keyboard events
+
+      // Left arrow key: previous item
+      if (e.keyCode === 37) {
+        e.preventDefault()
+        this.get_previous_item_by_date()
+      }
+      // Right arrow key: next item
+      if (e.keyCode === 39) {
+        e.preventDefault()
+        this.get_next_item_by_date()
+      }
+
+      if (e.key === '0') this.annotate_item(null)
+
+
+      this.labels.forEach( (label, index) => {
+        if (e.key === String(index + 1)) this.annotate_item(label)
+      })
+
+    },
+
   },
   computed: {
     document_id(){
       return this.$route.params._id
+    },
+    image_src() {
+      return `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.document_id}/image`
     },
     labels(){
       const {VUE_APP_LABELS} = process.env

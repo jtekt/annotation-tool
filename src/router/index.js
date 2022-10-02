@@ -16,7 +16,7 @@ const routes = [
     component: () => import('../views/Items.vue')
   },
   {
-    path: '/annotate/:_id',
+    path: '/items/:_id/annotate',
     name: 'annotate',
     component: () => import('../views/Annotate.vue')
   },
