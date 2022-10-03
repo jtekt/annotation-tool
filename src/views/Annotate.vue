@@ -164,7 +164,7 @@ export default {
     get_next_item_by_date(){
 
       const params = {
-        filter: {time: {'$lt' : this.item.time}},
+        to: this.item.time,
         sort: 'time',
         order: -1,
         limit: 1,
@@ -175,7 +175,7 @@ export default {
     get_previous_item_by_date(){
 
       const params = {
-        filter: {time: {'$gt' : this.item.time}},
+        from: this.item.time,
         sort: 'time',
         order: 1,
         limit: 1,
@@ -200,24 +200,30 @@ export default {
         this.loading = false
       })
     },
-    handle_keydown({key, keyCode, preventDefault}) {
+    handle_keydown(e) {
       // Keyboard events
 
       // Left arrow key: previous item
-      if (keyCode === 37) {
-        preventDefault()
+      if (e.keyCode === 37) {
+        e.preventDefault()
         this.get_previous_item_by_date()
       }
       // Right arrow key: next item
-      if (keyCode === 39) {
-        preventDefault()
+      if (e.keyCode === 39) {
+        e.preventDefault()
         this.get_next_item_by_date()
       }
 
-      if (key === '0') this.annotate_item(null)
+      if (e.key === '0'){
+        e.preventDefault()
+        this.annotate_item(null)
+      }
 
       this.labels.forEach( (label, index) => {
-        if (key === String(index + 1)) this.annotate_item(label)
+        if (e.key === String(index + 1)) {
+          this.annotate_item(label)
+          e.preventDefault()
+        }
       })
 
     },
