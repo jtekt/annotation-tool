@@ -200,25 +200,24 @@ export default {
         this.loading = false
       })
     },
-    handle_keydown(e) {
+    handle_keydown({key, keyCode, preventDefault}) {
       // Keyboard events
 
       // Left arrow key: previous item
-      if (e.keyCode === 37) {
-        e.preventDefault()
+      if (keyCode === 37) {
+        preventDefault()
         this.get_previous_item_by_date()
       }
       // Right arrow key: next item
-      if (e.keyCode === 39) {
-        e.preventDefault()
+      if (keyCode === 39) {
+        preventDefault()
         this.get_next_item_by_date()
       }
 
-      if (e.key === '0') this.annotate_item(null)
-
+      if (key === '0') this.annotate_item(null)
 
       this.labels.forEach( (label, index) => {
-        if (e.key === String(index + 1)) this.annotate_item(label)
+        if (key === String(index + 1)) this.annotate_item(label)
       })
 
     },

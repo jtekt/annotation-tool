@@ -8,7 +8,7 @@ services:
     command: ["--insecure-registry=172.16.98.151:5000"]
 
 variables:
-  APPLICATION_NAME: annotation-tool-mongoose
+  APPLICATION_NAME: annotation-tool
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
   CONTAINER_IMAGE_DOCKER_HUB_TAGGED: ${CONTAINER_IMAGE_DOCKER_HUB}:${CI_COMMIT_SHORT_SHA}
@@ -22,7 +22,6 @@ build:
   before_script:
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
   script:
-
     # Building image
     - docker build -t ${CONTAINER_IMAGE} .
     # Tagging image for Docker Hub
