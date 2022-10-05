@@ -1,7 +1,6 @@
 <template>
   <AppTemplate
-    :options="options"
-    @user="get_user($event)">
+    :options="options">
 
     <template v-slot:nav>
       <v-list
@@ -46,11 +45,5 @@ export default {
       {title: 'About', to: {name: 'About'}, icon: 'mdi-information-outline'},
     ]
   }),
-
-  methods: {
-    get_user(user){
-      console.log(user)
-    }
-  }
 };
 </script>

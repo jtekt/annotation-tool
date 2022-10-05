@@ -35,7 +35,7 @@
             <v-img contain :src="image_src" alt="" />
           </v-col>
           <v-col>
-            <v-radio-group v-model="item.data.annotation" @change="annotate_item()">
+            <v-radio-group v-model="item.data.annotation" @change="save_annotation()">
               <v-radio label="No annotation" :value="null" />
               <v-radio v-for="(label, index) in labels" :key="`label_${index}`" :label="label" :value="label" />
             </v-radio-group>
@@ -184,7 +184,9 @@ export default {
       this.get_items_with_options({params})
     },
 
-    annotate_item(){
+
+
+    save_annotation(){
       const url = `${this.api_url}/images/${this.item._id}`
       const {annotation} = this.item.data
       this.axios.patch(url, {annotation})
@@ -199,6 +201,11 @@ export default {
       .finally( () => {
         this.loading = false
       })
+    },
+
+    annotate(newAnnotation){
+      this.item.data.annotation = newAnnotation
+      this.save_annotation()
     },
     handle_keydown(e) {
       // Keyboard events
@@ -216,13 +223,14 @@ export default {
 
       if (e.key === '0'){
         e.preventDefault()
-        this.annotate_item(null)
+        this.annotate(null)
       }
 
       this.labels.forEach( (label, index) => {
         if (e.key === String(index + 1)) {
-          this.annotate_item(label)
           e.preventDefault()
+          this.annotate(label)
+          console.log(label)
         }
       })
 
