@@ -4,9 +4,14 @@ This is a tool to annotate image datasets, mainly intended to be used in AI appl
 It allows each images to be annotated with a label picked from predefined list.
 Here, images are to be stored and managed by the Image Storage Service, developed by JTEKT.
 
+<p align="center">
+  <img src="./docs/screenshot.png">
+</p>
+
 ## Environment variables
 
 This tool is intended to be run as a docker container, with parameters configured using environment variables.
+
 Here is a list of the available options:
 
 | Variable  | Description |
