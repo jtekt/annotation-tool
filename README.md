@@ -1,24 +1,20 @@
-# annotation_tool_mongoose
+# Annotation tool
 
-## Project setup
-```
-npm install
-```
+This is a tool to annotate image datasets, mainly intended to be used in AI applications.
+It allows each images to be annotated with a label picked from predefined list.
+Here, images are to be stored and managed by the Image Storage Service, developed by JTEKT.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Environment variables
 
-### Compiles and minifies for production
-```
-npm run build
-```
+This tool is intended to be run as a docker container, with parameters configured using environment variables.
+Here is a list of the available options:
 
-### Lints and fixes files
-```
-npm run lint
-```
+| Variable  | Description |
+| --- | --- |
+| VUE_APP_IMAGE_STORAGE_API_URL  | The URL of Image Storage Service API |
+| VUE_APP_LABELS  | Comma-separated list of labels |
+| VUE_APP_IDENTIFICATION_URL  | URL of the user identification system (optional) |
+| VUE_APP_LOGIN_URL  | URL of the user login system (optional) |
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Note: Authentication is enforced if both VUE_APP_IDENTIFICATION_URL and VUE_APP_LOGIN_URL are set
+
