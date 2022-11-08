@@ -20,7 +20,7 @@
 
 
       <v-data-table :loading="loading" :headers="headers" :items="items" :server-items-length="total"
-        :options.sync="options" @click:row="$router.push({name: 'annotate', params: {_id: $event._id}})">
+        :options.sync="tableOptions" @click:row="$router.push({name: 'annotate', params: {_id: $event._id}})">
 
 
         <!-- Thumbnails -->
@@ -47,10 +47,7 @@
           {text: 'Annotation', value: 'data.annotation'}
         ],
         total: 0,
-        options: {
-          sortBy: ['time'],
-          sortDesc: [true],
-        },
+
       }
 
     },
@@ -58,7 +55,7 @@
       this.get_images()
     },
     watch: {
-      options: {
+      query: {
         handler() {
           this.get_images()
         },
@@ -73,13 +70,8 @@
         this.loading = true
         this.items = []
         const url = `${process.env.VUE_APP_IMAGE_STORAGE_API_URL}/images`
-        const { itemsPerPage, page, sortBy, sortDesc } = this.options
-        const params = {
-          limit: itemsPerPage,
-          skip: (page - 1) * itemsPerPage,
-          sort: sortBy[0],
-          order: sortDesc[0] ? -1 : 1,
-        }
+        const params = this.query
+
         this.axios.get(url, { params })
           .then(({ data }) => {
             this.items = data.items
@@ -96,7 +88,41 @@
       
     },
     computed: {
+      query() {
+        return this.$route.query
+      },
+      tableOptions: {
+        get() {
 
+          const {
+            limit = 10,
+            sort = 'time',
+            order = -1,
+            skip = 0,
+          } = this.$route.query
+
+          return {
+            itemsPerPage: Number(limit),
+            sortBy: [sort],
+            sortDesc: [order === '-1'],
+            page: (skip / limit) + 1
+          }
+        },
+        set(newVal) {
+
+          const { itemsPerPage, page, sortBy, sortDesc } = newVal
+          const params = {
+            limit: String(itemsPerPage),
+            skip: String((page - 1) * itemsPerPage),
+            order: String(sortDesc[0] ? -1 : 1),
+            sort: sortBy[0],
+          }
+          const query = { ...this.$route.query, ...params }
+
+          // Preventing route duplicates
+          if (JSON.stringify(this.$route.query) !== JSON.stringify(query)) this.$router.push({ query })
+        }
+      },
     }
 
   }
