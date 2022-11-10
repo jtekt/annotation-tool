@@ -39,6 +39,10 @@ export default {
       title: "Annotation tool",
       login_url: process.env.VUE_APP_LOGIN_URL,
       identification_url: process.env.VUE_APP_IDENTIFICATION_URL,
+      header_logo: require('@/assets/jtekt_logo_negative.jpg'),
+      authentication_logo: require('@/assets/jtekt_logo.jpg'),
+      colors: { app_bar: '#000' },
+      author: 'JTEKT Corporation',
     },
     nav: [
       {title: 'Items', to: {name: 'items'}, icon: 'mdi-format-list-bulleted'},
@@ -47,3 +51,9 @@ export default {
   }),
 };
 </script>
+
+<style>
+.header_logo {
+  border-right: 1px solid white;
+}
+</style>
