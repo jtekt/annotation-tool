@@ -98,7 +98,7 @@
           const {
             limit = 10,
             sort = 'time',
-            order = -1,
+            order = 1,
             skip = 0,
           } = this.$route.query
 
