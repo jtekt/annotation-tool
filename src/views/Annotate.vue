@@ -31,10 +31,10 @@
       <v-card-text>
 
         <v-row>
-          <v-col cols="10">
-            <v-img contain :src="image_src" alt="" />
+          <v-col cols="9">
+            <v-img contain :src="image_src" alt="" max-height="70vh"/>
           </v-col>
-          <v-col>
+          <v-col cols="3">
             <v-radio-group v-model="item.data.annotation" @change="save_annotation()">
               <v-radio label="No annotation" :value="null" />
               <v-radio v-for="(label, index) in labels" :key="`label_${index}`" :label="label" :value="label" />
