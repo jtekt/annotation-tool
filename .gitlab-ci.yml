@@ -1,33 +1,38 @@
 stages:
   - build
 
-image: moreillon/tdd-dind
-
+image: moreillon/ci-dind:4bca50d7
 services:
   - name: docker:19.03.12-dind
-    command: ["--insecure-registry=172.16.98.151:5000"]
 
 variables:
   APPLICATION_NAME: annotation-tool
-  CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
-  CONTAINER_IMAGE_DOCKER_HUB: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}
-  CONTAINER_IMAGE_DOCKER_HUB_TAGGED: ${CONTAINER_IMAGE_DOCKER_HUB}:${CI_COMMIT_SHORT_SHA}
+  CONTAINER_REGISTRY_URL: 732469118990.dkr.ecr.ap-northeast-1.amazonaws.com
+  CONTAINER_IMAGE: ${CONTAINER_REGISTRY_URL}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
 build:
   stage: build
-  tags:
-    - dind
   only:
     - master
+  tags:
+    - dind
   before_script:
-    - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    # Create repository if needed
+    - >
+      aws ecr create-repository --repository-name ${APPLICATION_NAME}
+      || echo "Repository might have already existed"
+    # Log in to the registry (AWS credentials are stored as GitLab env variables)
+    - >
+      aws ecr get-login-password
+      | docker login
+      --username AWS
+      --password-stdin
+      ${CONTAINER_REGISTRY_URL}
   script:
-    # Building image
+    # Build the container image
     - docker build -t ${CONTAINER_IMAGE} .
-    # Tagging image for Docker Hub
-    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB}
-    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
-    # Pushing images
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
+    # Build and push container image to registry
     - docker push ${CONTAINER_IMAGE}
-    - docker push ${CONTAINER_IMAGE_DOCKER_HUB}
-    - docker push ${CONTAINER_IMAGE_DOCKER_HUB_TAGGED}
+    - docker push ${CONTAINER_IMAGE_TAGGED}

@@ -149,6 +149,8 @@ export default {
     },
     get_next_unannotated_item(){
 
+      // TODO: FIX BECAUSE CURRENTLY NOT WORKING
+
       const params = {
         filter: { 
           $or: [

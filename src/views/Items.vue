@@ -6,11 +6,12 @@
           Items
         </v-col>
         <v-spacer />
-        <v-col cols="auto">
+        <!-- TODO: FIX -->
+        <!-- <v-col cols="auto">
           <v-btn :to="{name: 'annotate', params: {_id: 'random'}}">
             First unannotated item
           </v-btn>
-        </v-col>
+        </v-col> -->
       </v-row>
     </v-toolbar>
     <v-divider />
