@@ -7,8 +7,7 @@ services:
 
 variables:
   APPLICATION_NAME: annotation-tool
-  CONTAINER_REGISTRY_URL: 732469118990.dkr.ecr.ap-northeast-1.amazonaws.com
-  CONTAINER_IMAGE: ${CONTAINER_REGISTRY_URL}/${APPLICATION_NAME}
+  CONTAINER_IMAGE: ${AWS_ECR_PUBLIC_URL}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
 build:
@@ -18,21 +17,17 @@ build:
   tags:
     - dind
   before_script:
-    # Create repository if needed
+    # Registry login
+    - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
+    # Create repository in ECR if it does not exist yet
     - >
-      aws ecr create-repository --repository-name ${APPLICATION_NAME}
+      aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
       || echo "Repository might have already existed"
-    # Log in to the registry (AWS credentials are stored as GitLab env variables)
-    - >
-      aws ecr get-login-password
-      | docker login
-      --username AWS
-      --password-stdin
-      ${CONTAINER_REGISTRY_URL}
   script:
-    # Build the container image
+    # Building image
     - docker build -t ${CONTAINER_IMAGE} .
+    # Tagging images
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
-    # Build and push container image to registry
+    # Pushing images
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
