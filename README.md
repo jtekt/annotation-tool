@@ -8,9 +8,18 @@ Here, images are to be stored and managed by the Image Storage Service, develope
   <img src="./docs/screenshot.png">
 </p>
 
-## Environment variables
+## Usage
 
-This tool is intended to be run as a docker container, with parameters configured using environment variables.
+This application is intended to be run as a docker container. For example:
+
+```
+docker run \
+-e VUE_APP_IMAGE_STORAGE_API_URL=http://192.168.1.2:7070 \
+-e VUE_APP_LABELS=cat,dog \
+public.ecr.aws/jtekt-corporation/annotation-tool
+```
+
+## Environment variables
 
 Here is a list of the available options:
 
