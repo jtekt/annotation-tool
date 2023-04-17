@@ -48,7 +48,7 @@
 <script>
 import QuerySettings from "../components/QuerySettings.vue"
 
-const { VUE_APP_IMAGE_STORAGE_API_URL, VUE_APP_DISPLAYED_FIELDS } = process.env
+const { VUE_APP_DISPLAYED_FIELDS } = process.env
 
 export default {
   name: "items",
