@@ -66,7 +66,6 @@ export default {
     return {
       loading: false,
       item: null,
-      api_url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
 
       snackbar: {
         show: false,
@@ -91,7 +90,7 @@ export default {
   methods: {
     get_item_by_id() {
       this.loading = true
-      const url = `${this.api_url}/images/${this.document_id}`
+      const url = `/images/${this.document_id}`
       this.axios
         .get(url)
         .then(({ data }) => {
@@ -114,7 +113,7 @@ export default {
 
       if (this.loading) return
       this.loading = true
-      const url = `${this.api_url}/images`
+      const url = `/images`
 
       this.axios
         .get(url, options)
@@ -176,7 +175,7 @@ export default {
     },
 
     save_annotation() {
-      const url = `${this.api_url}/images/${this.item._id}`
+      const url = `/images/${this.item._id}`
       const { annotation } = this.item.data
       this.axios
         .patch(url, { annotation })

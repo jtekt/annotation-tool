@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     image_src({ _id }) {
-      return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
+      return `/images/${_id}/image`
     },
     get_items_and_fields() {
       this.get_items()
