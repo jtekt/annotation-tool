@@ -48,7 +48,7 @@
 <script>
 import QuerySettings from "../components/QuerySettings.vue"
 
-const { VUE_APP_DISPLAYED_FIELDS } = process.env
+const { VUE_APP_DISPLAYED_FIELDS, VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 
 export default {
   name: "items",
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     image_src({ _id }) {
-      return `/images/${_id}/image`
+      return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
     },
     get_items_and_fields() {
       this.get_items()
