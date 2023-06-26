@@ -149,7 +149,7 @@ export default {
 
         // Preventing route duplicates
         if (JSON.stringify(this.$route.query) !== JSON.stringify(query))
-          this.$router.push({ query })
+          this.$router.replace({ query })
       },
     },
   },
