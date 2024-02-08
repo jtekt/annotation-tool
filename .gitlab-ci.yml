@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy
 
 image: moreillon/ci-dind:4bca50d7
 services:
@@ -31,3 +32,16 @@ build:
     # Pushing images
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - internal
+  script:
+    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+  environment:
+    name: onpremise
+    kubernetes:
+      namespace: ${K8S_NAMESPACE}
