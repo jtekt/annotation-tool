@@ -112,10 +112,8 @@ export default {
         async takePicture(){
             const context = this.canvas.getContext('2d')
 
-            // Reduce size of image by half
-            const {resizeCoefficient} = this.$store.state.settings.capture
-            this.canvas.height = this.video.videoHeight * resizeCoefficient
-            this.canvas.width = this.video.videoWidth * resizeCoefficient
+            this.canvas.height = this.video.videoHeight
+            this.canvas.width = this.video.videoWidth
 
             context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 
