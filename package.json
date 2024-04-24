@@ -12,6 +12,7 @@
     "@moreillon/vue_application_template_vuetify": "^1.2.2",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "uuid": "^9.0.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.4.0",
     "vue-i18n": "^8.26.3",
