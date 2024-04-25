@@ -1,15 +1,9 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-// import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
   {
     path: "/",
     name: "items",
@@ -22,7 +16,7 @@ const routes = [
   },
   {
     path: "/camera",
-    name: "annotate",
+    name: "camera",
     component: () => import("../views/Camera.vue"),
   },
   {

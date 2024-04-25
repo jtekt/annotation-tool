@@ -18,7 +18,7 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="auto">
-          <v-btn :loading="uploading" @click="upload()">
+          <v-btn :loading="uploading" @click="upload()" color="primary">
             <v-icon left>mdi-upload</v-icon>
             <span>Upload</span>
           </v-btn>
@@ -46,6 +46,9 @@ const { VUE_APP_LABELS } = process.env
 
 export default {
   name: "Camera",
+  components: {
+    CameraControls,
+  },
   data() {
     return {
       picture: null,
@@ -71,6 +74,7 @@ export default {
       const headers = { "Content-Type": "multipart/form-data" }
 
       try {
+        this.uploading = true
         await this.axios.post(`/images`, body, { headers })
 
         this.picture = false

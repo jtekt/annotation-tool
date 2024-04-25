@@ -61,6 +61,11 @@ export default {
         icon: "mdi-image-multiple",
       },
       {
+        title: "Camera",
+        to: { name: "camera" },
+        icon: "mdi-camera",
+      },
+      {
         title: "About",
         to: { name: "About" },
         icon: "mdi-information-outline",
