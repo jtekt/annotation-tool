@@ -24,7 +24,6 @@ export default new Vuex.Store({
     saveLabels(state, labels) {
       state.labels = labels
       localStorage.setItem("labels", JSON.stringify(labels))
-      console.log(localStorage.getItem("labels"))
     },
   },
   actions: {},

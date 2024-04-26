@@ -42,8 +42,6 @@
 import CameraControls from "../components/CameraControls.vue"
 import { v4 as uuidv4 } from "uuid"
 
-const { VUE_APP_LABELS } = process.env
-
 export default {
   name: "Camera",
   components: {
@@ -94,8 +92,7 @@ export default {
   },
   computed: {
     labels() {
-      if (!VUE_APP_LABELS) return ["OK", "NG"]
-      return VUE_APP_LABELS.split(",")
+      return this.$store.state.labels
     },
   },
 }
