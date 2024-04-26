@@ -20,8 +20,13 @@ const routes = [
     component: () => import("../views/Camera.vue"),
   },
   {
+    path: "/settings",
+    name: "settings",
+    component: () => import("../views/Settings.vue"),
+  },
+  {
     path: "/about",
-    name: "About",
+    name: "about",
     component: () => import("../views/About.vue"),
   },
 ]
