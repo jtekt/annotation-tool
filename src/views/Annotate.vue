@@ -60,7 +60,7 @@
 </template>
 
 <script>
-const { VUE_APP_IMAGE_STORAGE_API_URL, VUE_APP_LABELS } = process.env
+const { VUE_APP_IMAGE_STORAGE_API_URL } = process.env
 export default {
   name: "Home",
   data() {
@@ -231,8 +231,7 @@ export default {
       return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${this.document_id}/image`
     },
     labels() {
-      if (!VUE_APP_LABELS) return ["OK", "NG"]
-      return VUE_APP_LABELS.split(",")
+      return this.$store.state.labels
     },
   },
 }
