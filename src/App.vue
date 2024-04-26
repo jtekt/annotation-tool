@@ -88,7 +88,7 @@ export default {
   methods: {
     async getAvailableCameras() {
       this.cameraAvailable = (
-        await navigator.mediaDevices.enumerateDevices()
+        await navigator.mediaDevices?.enumerateDevices()
       )?.filter((d) => d.kind === "videoinput")?.length
     },
   },
