@@ -26,7 +26,7 @@ Here is a list of the available options:
 | Variable                      | Description                                      |
 | ----------------------------- | ------------------------------------------------ |
 | VUE_APP_IMAGE_STORAGE_API_URL | The URL of Image Storage Service API             |
-| VUE_APP_LABELS                | Comma-separated list of labels                   |
+| VUE_APP_LABELS                | Comma-separated list of labels (optional)        |
 | VUE_APP_IDENTIFICATION_URL    | URL of the user identification system (optional) |
 | VUE_APP_LOGIN_URL             | URL of the user login system (optional)          |
 
