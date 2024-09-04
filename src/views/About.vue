@@ -1,10 +1,7 @@
 <template>
   <v-card>
     <v-toolbar flat>
-      <v-btn
-        icon
-        exact
-        :to="{name: 'images'}">
+      <v-btn icon exact :to="{ name: 'items' }">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       <v-toolbar-title>Annotation tool</v-toolbar-title>
@@ -16,59 +13,57 @@
         hide-default-footer
         :itemsPerPage="-1"
         :headers="headers"
-        :items="services"/>
+        :items="services"
+      />
     </v-card-text>
-
-
   </v-card>
 </template>
 
 <script>
-import pjson from '@/../package.json'
+import pjson from "@/../package.json"
 export default {
-  name: 'About',
-  data () {
+  name: "About",
+  data() {
     return {
       headers: [
-        {text: 'Service', value: "name"},
-        {text: 'Version', value: "version"},
-        {text: 'URL', value: "url"},
-
+        { text: "Service", value: "name" },
+        { text: "Version", value: "version" },
+        { text: "URL", value: "url" },
       ],
       services: [
         {
-          name: 'Annotation tool',
+          name: "Annotation tool",
           url: window.location.origin,
-          version: pjson.version
+          version: pjson.version,
         },
         {
-          name: 'Image storage Back-end',
+          name: "Image storage Back-end",
           url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
-          version: null
+          version: null,
         },
       ],
     }
   },
-  mounted () {
+  mounted() {
     this.get_services_version()
   },
   methods: {
-
-    get_services_version () {
+    get_services_version() {
       this.services.forEach((service) => {
         if (service.version) return
-        service.version = 'Connecting...'
-        this.axios.get(service.url)
-          .then(({ data }) => { service.version = data.version })
-          .catch(() => { service.version = 'Unable to connect' })
+        service.version = "Connecting..."
+        this.axios
+          .get(service.url)
+          .then(({ data }) => {
+            service.version = data.version
+          })
+          .catch(() => {
+            service.version = "Unable to connect"
+          })
       })
-    }
-  }
-
+    },
+  },
 }
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

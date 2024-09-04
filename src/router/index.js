@@ -1,36 +1,40 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-// import Home from '../views/Home.vue'
+import Vue from "vue"
+import VueRouter from "vue-router"
 
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
   {
-    path: '/',
-    name: 'items',
-    component: () => import('../views/Items.vue')
+    path: "/",
+    name: "items",
+    component: () => import("../views/Items.vue"),
   },
   {
-    path: '/items/:_id/annotate',
-    name: 'annotate',
-    component: () => import('../views/Annotate.vue')
+    path: "/items/:_id/annotate",
+    name: "annotate",
+    component: () => import("../views/Annotate.vue"),
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue')
-  }
+    path: "/camera",
+    name: "camera",
+    component: () => import("../views/Camera.vue"),
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    component: () => import("../views/Settings.vue"),
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: () => import("../views/About.vue"),
+  },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
 })
 
 export default router

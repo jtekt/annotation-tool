@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: annotation-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: annotation-tool
+  template:
+    metadata:
+      labels:
+        app: annotation-tool
+    spec:
+      containers:
+      - name: annotation-tool
+        image: ${CONTAINER_IMAGE_TAGGED}
+        env:
+        - name: VUE_APP_IMAGE_STORAGE_API_URL
+          value: http://172.16.98.151:30480/api
+        - name: VUE_APP_LABELS
+          value: apple,banana,orange
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: annotation-tool
+spec:
+  ports:
+  - port: 80
+    nodePort: 30443
+  selector:
+    app: annotation-tool
+  type: NodePort

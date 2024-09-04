@@ -7,22 +7,47 @@
         </v-list-item>
         <v-divider />
 
-        <v-list-item
-          v-for="(item, index) in nav"
-          :key="`nav_item_${index}`"
-          :to="item.to"
-          exact
-        >
+        <v-list-item exact :to="{ name: 'items' }">
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>mdi-image-multiple</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>Images</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
         <NavCategories />
+
+        <v-list-item exact :to="{ name: 'camera' }" v-if="cameraAvailable">
+          <v-list-item-icon>
+            <v-icon>mdi-camera</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>Camera</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item exact :to="{ name: 'settings' }">
+          <v-list-item-icon>
+            <v-icon>mdi-cogs</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>Settings</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item exact :to="{ name: 'about' }">
+          <v-list-item-icon>
+            <v-icon>mdi-information-outline</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>About</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </template>
   </AppTemplate>
@@ -54,19 +79,19 @@ export default {
       colors: { app_bar: "#000" },
       author: "Maxime Moreillon, JTEKT Corporation",
     },
-    nav: [
-      {
-        title: "Images",
-        to: { name: "items" },
-        icon: "mdi-image-multiple",
-      },
-      {
-        title: "About",
-        to: { name: "About" },
-        icon: "mdi-information-outline",
-      },
-    ],
+    cameraAvailable: false,
   }),
+  mounted() {
+    this.getAvailableCameras()
+    this.$store.commit("loadLabels")
+  },
+  methods: {
+    async getAvailableCameras() {
+      this.cameraAvailable = (
+        await navigator.mediaDevices?.enumerateDevices()
+      )?.filter((d) => d.kind === "videoinput")?.length
+    },
+  },
 }
 </script>
 
