@@ -31,3 +31,26 @@ Here is a list of the available options:
 | VUE_APP_LOGIN_URL             | URL of the user login system (optional)          |
 
 Note: Authentication is enforced if both VUE_APP_IDENTIFICATION_URL and VUE_APP_LOGIN_URL are set
+
+## Development
+
+```
+npm run dev
+```
+
+### Troubleshooting
+
+In case of the following error:
+
+```
+opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
+library: 'digital envelope routines',
+reason: 'unsupported',
+code: 'ERR_OSSL_EVP_UNSUPPORTED'
+```
+
+Run the following prior to starting the development server
+
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
