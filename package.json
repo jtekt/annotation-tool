@@ -3,14 +3,14 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
-    "@moreillon/vue_application_template_vuetify": "^1.2.2",
+    "@moreillon/vue_application_template_vuetify": "^3.2.1",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "uuid": "^9.0.1",

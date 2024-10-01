@@ -54,7 +54,10 @@
 </template>
 
 <script>
-const { VUE_APP_PREVENT_LABELS_EDIT } = process.env
+const {
+  VUE_APP_PREVENT_LABELS_EDIT,
+  // VUE_APP_LABELS
+} = process.env
 
 export default {
   name: "LabelsEdit",
@@ -70,6 +73,7 @@ export default {
     }
   },
   methods: {
+    resetLabels() {},
     saveLabels() {
       this.$store.commit("saveLabels", this.labels)
       this.snackbar.text = "Labels saved"

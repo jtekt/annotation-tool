@@ -34,7 +34,12 @@
               v-model="item.data.annotation"
               @change="save_annotation()"
             >
-              <v-radio label="No annotation" :value="null" />
+              <v-radio :value="null">
+                <template v-slot:label>
+                  <v-icon>mdi-tag-off</v-icon>
+                </template>
+              </v-radio>
+
               <v-radio
                 v-for="(label, index) in labels"
                 :key="`label_${index}`"

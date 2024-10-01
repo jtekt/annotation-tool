@@ -58,7 +58,13 @@ import AppTemplate from "@moreillon/vue_application_template_vuetify"
 import LocaleSelector from "./components/LocaleSelector.vue"
 import NavCategories from "./components/NavCategories.vue"
 
-const { VUE_APP_LOGIN_URL, VUE_APP_IDENTIFICATION_URL } = process.env
+const {
+  VUE_APP_LOGIN_URL,
+  VUE_APP_IDENTIFICATION_URL,
+  VUE_APP_OIDC_AUTHORITY,
+  VUE_APP_OIDC_CLIENT_ID,
+  VUE_APP_OIDC_AUDIENCE,
+} = process.env
 
 export default {
   name: "App",
@@ -74,6 +80,13 @@ export default {
       title: "Annotation tool",
       login_url: VUE_APP_LOGIN_URL,
       identification_url: VUE_APP_IDENTIFICATION_URL,
+      oidc: {
+        authority: VUE_APP_OIDC_AUTHORITY,
+        client_id: VUE_APP_OIDC_CLIENT_ID,
+        extraQueryParams: {
+          audience: VUE_APP_OIDC_AUDIENCE,
+        },
+      },
       header_logo: require("@/assets/jtekt_logo_negative.jpg"),
       authentication_logo: require("@/assets/jtekt_logo.jpg"),
       colors: { app_bar: "#000" },
