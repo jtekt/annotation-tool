@@ -3,7 +3,7 @@
     <v-toolbar flat>
       <v-row align="baseline" justify="space-between">
         <v-col cols="auto">
-          <v-btn icon @click="get_previous_item_by_date()">
+          <v-btn icon @click="get_previous_item()" :disabled="loading || currentCursor === 0">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
         </v-col>
@@ -13,7 +13,7 @@
         </v-col>
 
         <v-col cols="auto">
-          <v-btn icon @click="get_next_item_by_date()">
+          <v-btn icon @click="get_next_item()" :disabled="loading">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </v-col>
@@ -113,7 +113,7 @@ export default {
           this.loading = false
         })
     },
-    get_items_with_options(options) {
+    get_items_with_options(options, nextQuery) {
       // This function simply navigates to the next item
       // The item itself is obtained with get_item_by_id
 
@@ -123,10 +123,11 @@ export default {
 
       this.axios
         .get(url, options)
-        .then(({ data: { items, total } }) => {
-          if (!total) {
+        .then(({ data: { items } }) => {
+          if (items.length === 0) {
             this.snackbar.show = true
             this.snackbar.text = "No more items"
+            this.snackbar.color = "orange"
             return
           }
 
@@ -134,13 +135,23 @@ export default {
 
           // Prevent reloading current route
           if (this.document_id !== _id) {
-            this.$router.push({ name: "annotate", params: { _id } })
+            this.$router.push({
+              name: "annotate",
+              params: { _id },
+              query: {
+                ...this.$route.query,
+                ...(nextQuery || {}),
+              }, // update cursor
+            })
           }
         })
         .catch((error) => {
           this.error = true
           if (error.response) console.log(error.response.data)
           else console.log(error)
+          this.snackbar.show = true
+          this.snackbar.text = "Error loading next/previous item"
+          this.snackbar.color = "#c00000"
         })
         .finally(() => (this.loading = false))
     },
@@ -154,30 +165,41 @@ export default {
         },
         limit: 1,
       }
-
       this.get_items_with_options({ params })
     },
-    get_next_item_by_date() {
+    get_next_item() {
+      const { sort = "time", order = 1, ...rest } = this.query
+      const cursor = Number(this.$route.query.cursor || 0) + 1
       const params = {
-        to: this.item.time,
-        sort: "time",
-        order: -1,
+        ...rest,
+        sort,
+        order,
+        skip: cursor,
         limit: 1,
       }
-
-      this.get_items_with_options({ params })
+      delete params.cursor
+      this.get_items_with_options({ params }, { cursor })
     },
-    get_previous_item_by_date() {
-      const params = {
-        from: this.item.time,
-        sort: "time",
-        order: 1,
-        limit: 1,
+    get_previous_item() {
+      if (this.currentCursor === 0) {
+        this.snackbar.show = true
+        this.snackbar.text = "No previous items"
+        this.snackbar.color = "orange"
+        return
       }
 
-      this.get_items_with_options({ params })
+      const { sort = "time", order = 1, ...rest } = this.query
+      const cursor = Math.max(0, this.currentCursor - 1)
+      const params = {
+        ...rest,
+        sort,
+        order,
+        skip: cursor,
+        limit: 1,
+      }
+      delete params.cursor
+      this.get_items_with_options({ params }, { cursor })
     },
-
     save_annotation() {
       const url = `/images/${this.item._id}`
       const { annotation } = this.item.data
@@ -185,11 +207,13 @@ export default {
         .patch(url, { annotation })
         .then(({ data }) => {
           this.item = data
-          this.get_next_item_by_date()
-          //setTimeout(this.get_next_item_by_date, 500)
+          this.get_next_item()
         })
         .catch((error) => {
           console.error(error)
+          this.snackbar.show = true
+          this.snackbar.text = "Error saving annotation"
+          this.snackbar.color = "#c00000"
         })
         .finally(() => {
           this.loading = false
@@ -206,12 +230,12 @@ export default {
       // Left arrow key: previous item
       if (e.keyCode === 37) {
         e.preventDefault()
-        this.get_previous_item_by_date()
+        this.get_previous_item()
       }
       // Right arrow key: next item
       if (e.keyCode === 39) {
         e.preventDefault()
-        this.get_next_item_by_date()
+        this.get_next_item()
       }
 
       if (e.key === "0") {
@@ -237,6 +261,12 @@ export default {
     },
     labels() {
       return this.$store.state.labels
+    },
+    query() {
+      return this.$route.query
+    },
+    currentCursor() {
+      return Number(this.$route.query.cursor || 0)
     },
   },
 }

@@ -7,7 +7,13 @@
         </v-list-item>
         <v-divider />
 
-        <v-list-item exact :to="{ name: 'items' }">
+        <v-list-item
+          exact
+          :to="{
+            name: 'items',
+            query,
+          }"
+        >
           <v-list-item-icon>
             <v-icon>mdi-image-multiple</v-icon>
           </v-list-item-icon>
@@ -105,7 +111,16 @@ export default {
       )?.filter((d) => d.kind === "videoinput")?.length
     },
   },
-}
+  computed: {
+    query() {
+      // Remove cursor
+      // eslint-disable-next-line no-unused-vars
+      const { cursor, ...rest } = this.$route.query;
+
+      return rest;
+    },
+  },
+};
 </script>
 
 <style>

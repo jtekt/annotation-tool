@@ -26,9 +26,7 @@
         :items="items"
         :server-items-length="total"
         :options.sync="tableOptions"
-        @click:row="
-          $router.push({ name: 'annotate', params: { _id: $event._id } })
-        "
+        @click:row="handleQueryItemClick"
       >
         <!-- Thumbnails -->
         <template v-slot:item.image="{ item }">
@@ -69,10 +67,14 @@ export default {
     }
   },
   mounted() {
-    this.get_items_and_fields()
+    // Only fetch fields here, get_items is handled by the query watcher
+    if (!VUE_APP_DISPLAYED_FIELDS) this.get_fields()
   },
   watch: {
     query: {
+      // immediate: true ensures get_items() is called when the component
+      // first loads, even when navigating from another route
+      immediate: true,
       handler() {
         this.get_items()
       },
@@ -82,10 +84,6 @@ export default {
   methods: {
     image_src({ _id }) {
       return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
-    },
-    get_items_and_fields() {
-      this.get_items()
-      if (!VUE_APP_DISPLAYED_FIELDS) this.get_fields()
     },
     get_fields() {
       this.axios
@@ -115,6 +113,22 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    handleQueryItemClick(event, i) {
+      const {
+        skip = 0,
+        limit = 50,
+        sort = "time",
+        order = 1,
+        ...rest
+      } = this.query
+      const indexInPage = i.index
+      const cursor = Number(skip) + Number(indexInPage)
+      this.$router.push({
+        name: "annotate",
+        params: { _id: event._id },
+        query: { ...rest, skip, limit, sort, order, cursor },
+      })
     },
   },
   computed: {
