@@ -4,7 +4,7 @@
 
     <v-card-text>
       <v-container fluid>
-        <QuerySettings :fields="fields" />
+        <QueryFilter v-model="query" :fields="fields" :loading="loading" />
       </v-container>
 
       <v-data-table-server
@@ -39,7 +39,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import QuerySettings from "@/components/QuerySettings.vue";
 import axios from "@/axios";
 
 interface Item {
@@ -74,7 +73,26 @@ const headers = computed(() => [
   { title: "Annotation", key: "data.annotation", sortable: false },
 ]);
 
-const query = computed(() => route.query as Record<string, string>);
+const query = computed<Record<string, any>>({
+  get() {
+    return route.query as Record<string, any>;
+  },
+  set(val) {
+    const newQuery: Record<string, any> = {};
+
+    // prune empty values, like setQueryParams does
+    Object.entries(val || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        newQuery[key] = value;
+      }
+    });
+
+    const currentQuery = route.query as Record<string, any>;
+    if (JSON.stringify(currentQuery) === JSON.stringify(newQuery)) return;
+
+    router.replace({ query: newQuery });
+  },
+});
 
 watch(query, () => getItems(), { deep: true, immediate: true });
 
