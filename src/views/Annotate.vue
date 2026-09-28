@@ -100,9 +100,16 @@ export default {
       this.axios
         .get(url)
         .then(({ data }) => {
-          this.item = data
-          if (!this.item.data.annotation)
-            this.$set(this.item.data, "annotation", null)
+          this.item = data;
+          if (!this.item.data) {
+            this.$set(this.item, "data", {});
+          }
+
+          if (
+            !Object.prototype.hasOwnProperty.call(this.item.data, "annotation")
+          ) {
+            this.$set(this.item.data, "annotation", null);
+          }
         })
         .catch((error) => {
           this.error = true
