@@ -16,9 +16,9 @@ spec:
         - name: annotation-tool
           image: ${CONTAINER_IMAGE_TAGGED}
           env:
-            - name: VUE_APP_IMAGE_STORAGE_API_URL
+            - name: VITE_IMAGE_STORAGE_API_URL
               value: http://172.16.98.153:30011/api
-            - name: VUE_APP_LABELS
+            - name: VITE_LABELS
               value: apple,banana,orange
 
 ---

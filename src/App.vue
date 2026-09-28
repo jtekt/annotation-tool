@@ -1,7 +1,7 @@
 <template>
   <AppTemplate :options="options">
     <template v-slot:nav>
-      <v-list dense nav>
+      <v-list nav>
         <v-list-item>
           <LocaleSelector />
         </v-list-item>
@@ -9,118 +9,82 @@
 
         <v-list-item
           exact
-          :to="{
-            name: 'items',
-            query,
-          }"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-image-multiple</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Images</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          :to="{ name: 'items', query }"
+          prepend-icon="mdi-image-multiple"
+          title="Images"
+        />
 
         <NavCategories />
 
-        <v-list-item exact :to="{ name: 'camera' }" v-if="cameraAvailable">
-          <v-list-item-icon>
-            <v-icon>mdi-camera</v-icon>
-          </v-list-item-icon>
+        <v-list-item
+          v-if="cameraAvailable"
+          exact
+          :to="{ name: 'camera' }"
+          prepend-icon="mdi-camera"
+          title="Camera"
+        />
 
-          <v-list-item-content>
-            <v-list-item-title>Camera</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-list-item
+          exact
+          :to="{ name: 'settings' }"
+          prepend-icon="mdi-cogs"
+          title="Settings"
+        />
 
-        <v-list-item exact :to="{ name: 'settings' }">
-          <v-list-item-icon>
-            <v-icon>mdi-cogs</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item exact :to="{ name: 'about' }">
-          <v-list-item-icon>
-            <v-icon>mdi-information-outline</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>About</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-list-item
+          exact
+          :to="{ name: 'about' }"
+          prepend-icon="mdi-information-outline"
+          title="About"
+        />
       </v-list>
     </template>
   </AppTemplate>
 </template>
 
-<script>
-import AppTemplate from "@moreillon/vue_application_template_vuetify"
-import LocaleSelector from "./components/LocaleSelector.vue"
-import NavCategories from "./components/NavCategories.vue"
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import AppTemplate from "./components/AppTemplate.vue";
+import LocaleSelector from "./components/LocaleSelector.vue";
+import NavCategories from "./components/NavCategories.vue";
+import { useAppStore } from "./store";
+import jtektLogoNegative from "@/assets/jtekt_logo_negative.jpg";
+import jtektLogo from "@/assets/jtekt_logo.jpg";
 
-const {
-  VUE_APP_LOGIN_URL,
-  VUE_APP_IDENTIFICATION_URL,
-  VUE_APP_OIDC_AUTHORITY,
-  VUE_APP_OIDC_CLIENT_ID,
-  VUE_APP_OIDC_AUDIENCE,
-} = process.env
+const store = useAppStore();
+const route = useRoute();
 
-export default {
-  name: "App",
+const cameraAvailable = ref(false);
 
-  components: {
-    AppTemplate,
-    NavCategories,
-    LocaleSelector,
-  },
-
-  data: () => ({
-    options: {
-      title: "Annotation tool",
-      login_url: VUE_APP_LOGIN_URL,
-      identification_url: VUE_APP_IDENTIFICATION_URL,
-      oidc: {
-        authority: VUE_APP_OIDC_AUTHORITY,
-        client_id: VUE_APP_OIDC_CLIENT_ID,
-        extraQueryParams: {
-          audience: VUE_APP_OIDC_AUDIENCE,
-        },
-      },
-      header_logo: require("@/assets/jtekt_logo_negative.jpg"),
-      authentication_logo: require("@/assets/jtekt_logo.jpg"),
-      colors: { app_bar: "#000" },
-      author: "Maxime Moreillon, JTEKT Corporation",
-    },
-    cameraAvailable: false,
-  }),
-  mounted() {
-    this.getAvailableCameras()
-    this.$store.commit("loadLabels")
-  },
-  methods: {
-    async getAvailableCameras() {
-      this.cameraAvailable = (
-        await navigator.mediaDevices?.enumerateDevices()
-      )?.filter((d) => d.kind === "videoinput")?.length
+const options = {
+  title: "Annotation tool",
+  login_url: import.meta.env.VITE_LOGIN_URL,
+  identification_url: import.meta.env.VITE_IDENTIFICATION_URL,
+  oidc: {
+    authority: import.meta.env.VITE_OIDC_AUTHORITY,
+    client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+    extraQueryParams: {
+      audience: import.meta.env.VITE_OIDC_AUDIENCE,
     },
   },
-  computed: {
-    query() {
-      // Remove cursor
-      // eslint-disable-next-line no-unused-vars
-      const { cursor, ...rest } = this.$route.query;
-
-      return rest;
-    },
-  },
+  header_logo: jtektLogoNegative,
+  authentication_logo: jtektLogo,
+  colors: { app_bar: "#000" },
+  author: "Maxime Moreillon, JTEKT Corporation",
 };
+
+const query = computed(() => {
+  const { cursor, ...rest } = route.query;
+  return rest;
+});
+
+onMounted(async () => {
+  store.loadLabels();
+  const devices = await navigator.mediaDevices?.enumerateDevices();
+  cameraAvailable.value = !!devices?.filter((d) => d.kind === "videoinput")
+    .length;
+});
 </script>
 
 <style>
