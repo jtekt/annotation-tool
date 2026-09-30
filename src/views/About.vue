@@ -11,7 +11,7 @@
       <p>Author: Maxime MOREILLON</p>
       <v-data-table
         hide-default-footer
-        :itemsPerPage="-1"
+        :items-per-page="-1"
         :headers="headers"
         :items="services"
       />
@@ -19,51 +19,48 @@
   </v-card>
 </template>
 
-<script>
-import pjson from "@/../package.json"
-export default {
-  name: "About",
-  data() {
-    return {
-      headers: [
-        { text: "Service", value: "name" },
-        { text: "Version", value: "version" },
-        { text: "URL", value: "url" },
-      ],
-      services: [
-        {
-          name: "Annotation tool",
-          url: window.location.origin,
-          version: pjson.version,
-        },
-        {
-          name: "Image storage Back-end",
-          url: process.env.VUE_APP_IMAGE_STORAGE_API_URL,
-          version: null,
-        },
-      ],
-    }
-  },
-  mounted() {
-    this.get_services_version()
-  },
-  methods: {
-    get_services_version() {
-      this.services.forEach((service) => {
-        if (service.version) return
-        service.version = "Connecting..."
-        this.axios
-          .get(service.url)
-          .then(({ data }) => {
-            service.version = data.version
-          })
-          .catch(() => {
-            service.version = "Unable to connect"
-          })
-      })
-    },
-  },
-}
-</script>
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import axios from "@/axios";
+import runtimeEnv from "@/runtimeEnv";
 
-<style scoped></style>
+interface Service {
+  name: string;
+  url: string;
+  version: string | null;
+}
+
+const headers = [
+  { title: "Service", key: "name" },
+  { title: "Version", key: "version" },
+  { title: "URL", key: "url" },
+];
+
+const services = ref<Service[]>([
+  {
+    name: "Annotation tool",
+    url: window.location.origin,
+    version: runtimeEnv.VITE_APP_VERSION,
+  },
+  {
+    name: "Image storage Back-end",
+    url: runtimeEnv.VITE_IMAGE_STORAGE_API_URL,
+    version: null,
+  },
+]);
+
+onMounted(() => {
+  services.value.forEach((service) => {
+    if (service.version) return;
+    service.version = "Connecting...";
+    axios
+      .get(service.url)
+      .then(({ data }) => {
+        service.version = data.version;
+      })
+      .catch(() => {
+        service.version = "Unable to connect";
+      });
+  });
+});
+</script>

@@ -14,8 +14,8 @@ This application is intended to be run as a docker container. For example:
 
 ```
 docker run \
--e VUE_APP_IMAGE_STORAGE_API_URL=http://192.168.1.2:7070 \
--e VUE_APP_LABELS=cat,dog \
+-e VITE_IMAGE_STORAGE_API_URL=http://192.168.1.2:7070 \
+-e VITE_LABELS=cat,dog \
 public.ecr.aws/jtekt-corporation/annotation-tool
 ```
 
@@ -23,34 +23,17 @@ public.ecr.aws/jtekt-corporation/annotation-tool
 
 Here is a list of the available options:
 
-| Variable                      | Description                                      |
-| ----------------------------- | ------------------------------------------------ |
-| VUE_APP_IMAGE_STORAGE_API_URL | The URL of Image Storage Service API             |
-| VUE_APP_LABELS                | Comma-separated list of labels (optional)        |
-| VUE_APP_IDENTIFICATION_URL    | URL of the user identification system (optional) |
-| VUE_APP_LOGIN_URL             | URL of the user login system (optional)          |
+| Variable                   | Description                                      |
+| -------------------------- | ------------------------------------------------ |
+| VITE_IMAGE_STORAGE_API_URL | The URL of Image Storage Service API             |
+| VITE_LABELS                | Comma-separated list of labels (optional)        |
+| VITE_IDENTIFICATION_URL    | URL of the user identification system (optional) |
+| VITE_LOGIN_URL             | URL of the user login system (optional)          |
 
-Note: Authentication is enforced if both VUE_APP_IDENTIFICATION_URL and VUE_APP_LOGIN_URL are set
+Note: Authentication is enforced if both VITE_IDENTIFICATION_URL and VITE_LOGIN_URL are set
 
 ## Development
 
 ```
 npm run dev
-```
-
-### Troubleshooting
-
-In case of the following error:
-
-```
-opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
-library: 'digital envelope routines',
-reason: 'unsupported',
-code: 'ERR_OSSL_EVP_UNSUPPORTED'
-```
-
-Run the following prior to starting the development server
-
-```
-export NODE_OPTIONS=--openssl-legacy-provider
 ```

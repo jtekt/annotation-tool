@@ -1,126 +1,92 @@
 <template>
-  <AppTemplate :options="options">
-    <template v-slot:nav>
-      <v-list dense nav>
-        <v-list-item>
+  <v-app>
+    <template v-if="!isLoginRoute">
+      <v-app-bar color="#000">
+        <v-app-bar-nav-icon v-if="showDrawer" @click="drawer = !drawer" />
+        <v-app-bar-title>Annotation tool</v-app-bar-title>
+        <template #append>
           <LocaleSelector />
-        </v-list-item>
-        <v-divider />
+          <ThemeToggle />
+          <v-btn v-if="session" icon="mdi-logout" @click="logout" />
+        </template>
+      </v-app-bar>
 
-        <v-list-item
-          exact
-          :to="{
-            name: 'items',
-            query,
-          }"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-image-multiple</v-icon>
-          </v-list-item-icon>
+      <v-navigation-drawer v-if="showDrawer" v-model="drawer">
+        <v-list nav>
+          <v-list-item
+            exact
+            :to="{ name: 'items', query }"
+            prepend-icon="mdi-image-multiple"
+            title="Images"
+          />
 
-          <v-list-item-content>
-            <v-list-item-title>Images</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <NavCategories />
 
-        <NavCategories />
+          <v-list-item
+            v-if="cameraAvailable"
+            exact
+            :to="{ name: 'camera' }"
+            prepend-icon="mdi-camera"
+            title="Camera"
+          />
 
-        <v-list-item exact :to="{ name: 'camera' }" v-if="cameraAvailable">
-          <v-list-item-icon>
-            <v-icon>mdi-camera</v-icon>
-          </v-list-item-icon>
+          <v-list-item
+            exact
+            :to="{ name: 'settings' }"
+            prepend-icon="mdi-cogs"
+            title="Settings"
+          />
 
-          <v-list-item-content>
-            <v-list-item-title>Camera</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item exact :to="{ name: 'settings' }">
-          <v-list-item-icon>
-            <v-icon>mdi-cogs</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item exact :to="{ name: 'about' }">
-          <v-list-item-icon>
-            <v-icon>mdi-information-outline</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>About</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+          <v-list-item
+            exact
+            :to="{ name: 'about' }"
+            prepend-icon="mdi-information-outline"
+            title="About"
+          />
+        </v-list>
+      </v-navigation-drawer>
     </template>
-  </AppTemplate>
+
+    <v-main>
+      <v-container fluid>
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<script>
-import AppTemplate from "@moreillon/vue_application_template_vuetify"
-import LocaleSelector from "./components/LocaleSelector.vue"
-import NavCategories from "./components/NavCategories.vue"
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useOptionalAuth } from "@/composables/useOptionalAuth";
+import { useAxiosAuth } from "@/composables/useAxiosAuth";
+import { useAppStore } from "./store";
+import LocaleSelector from "./components/LocaleSelector.vue";
+import NavCategories from "./components/NavCategories.vue";
+import ThemeToggle from "./components/ThemeToggle.vue";
 
-const {
-  VUE_APP_LOGIN_URL,
-  VUE_APP_IDENTIFICATION_URL,
-  VUE_APP_OIDC_AUTHORITY,
-  VUE_APP_OIDC_CLIENT_ID,
-  VUE_APP_OIDC_AUDIENCE,
-} = process.env
+useAxiosAuth();
 
-export default {
-  name: "App",
+const { session, logout, authConfigured } = useOptionalAuth();
+const store = useAppStore();
+const route = useRoute();
+const drawer = ref(true);
+const showDrawer = computed(() => !authConfigured || session.value);
+const cameraAvailable = ref(false);
 
-  components: {
-    AppTemplate,
-    NavCategories,
-    LocaleSelector,
-  },
+const isLoginRoute = computed(() => route.name === "login");
 
-  data: () => ({
-    options: {
-      title: "Annotation tool",
-      login_url: VUE_APP_LOGIN_URL,
-      identification_url: VUE_APP_IDENTIFICATION_URL,
-      oidc: {
-        authority: VUE_APP_OIDC_AUTHORITY,
-        client_id: VUE_APP_OIDC_CLIENT_ID,
-        extraQueryParams: {
-          audience: VUE_APP_OIDC_AUDIENCE,
-        },
-      },
-      header_logo: require("@/assets/jtekt_logo_negative.jpg"),
-      authentication_logo: require("@/assets/jtekt_logo.jpg"),
-      colors: { app_bar: "#000" },
-      author: "Maxime Moreillon, JTEKT Corporation",
-    },
-    cameraAvailable: false,
-  }),
-  mounted() {
-    this.getAvailableCameras()
-    this.$store.commit("loadLabels")
-  },
-  methods: {
-    async getAvailableCameras() {
-      this.cameraAvailable = (
-        await navigator.mediaDevices?.enumerateDevices()
-      )?.filter((d) => d.kind === "videoinput")?.length
-    },
-  },
-  computed: {
-    query() {
-      // Remove cursor
-      // eslint-disable-next-line no-unused-vars
-      const { cursor, ...rest } = this.$route.query;
+const query = computed(() => {
+  const { cursor, ...rest } = route.query;
+  return rest;
+});
 
-      return rest;
-    },
-  },
-};
+onMounted(async () => {
+  store.loadLabels();
+  const devices = await navigator.mediaDevices?.enumerateDevices();
+  cameraAvailable.value = !!devices?.filter((d) => d.kind === "videoinput")
+    .length;
+});
 </script>
 
 <style>

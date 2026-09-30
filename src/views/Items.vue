@@ -1,171 +1,170 @@
 <template>
   <v-card>
-    <v-toolbar flat>
-      <v-row align="center">
-        <v-col cols="auto"> Items </v-col>
-        <v-spacer />
-        <!-- TODO: FIX -->
-        <!-- <v-col cols="auto">
-          <v-btn :to="{name: 'annotate', params: {_id: 'random'}}">
-            First unannotated item
-          </v-btn>
-        </v-col> -->
-      </v-row>
-    </v-toolbar>
-    <v-divider />
+    <template #title>Images</template>
 
     <v-card-text>
-      <v-row>
-        <v-col cols="12">
-          <QuerySettings :fields="fields" />
-        </v-col>
-      </v-row>
-      <v-data-table
+      <v-container fluid>
+        <QueryFilter v-model="query" :fields="fields" :loading="loading" />
+      </v-container>
+
+      <v-data-table-server
         :loading="loading"
         :headers="headers"
         :items="items"
-        :server-items-length="total"
-        :options.sync="tableOptions"
-        @click:row="handleQueryItemClick"
+        :items-length="total"
+        :items-per-page="tableItemsPerPage"
+        :items-per-page-options="[
+          { value: 10, title: '10' },
+          { value: 50, title: '50' },
+          { value: 100, title: '100' },
+        ]"
+        item-value="_id"
+        @update:options="handleOptionsUpdate"
+        @click:row="handleRowClick"
       >
-        <!-- Thumbnails -->
         <template v-slot:item.image="{ item }">
           <v-img
             contain
-            max-height="100"
-            max-width="100"
-            :src="image_src(item)"
+            height="100"
+            width="100"
+            :src="imageSrc(item)"
             alt="item"
           />
         </template>
-      </v-data-table>
+      </v-data-table-server>
     </v-card-text>
   </v-card>
 </template>
 
-<script>
-import QuerySettings from "../components/QuerySettings.vue"
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "@/axios";
+import runtimeEnv from "@/runtimeEnv";
 
-const { VUE_APP_DISPLAYED_FIELDS, VUE_APP_IMAGE_STORAGE_API_URL } = process.env
+interface Item {
+  _id: string;
+  file: string;
+  time: string;
+  data: Record<string, unknown>;
+}
 
-export default {
-  name: "items",
-  components: {
-    QuerySettings,
-  },
-  data() {
-    return {
-      loading: false,
-      items: [],
-      fields: [],
-      headers: [
-        { text: "Image", value: "image" },
-        { text: "Time", value: "time" },
-        { text: "Annotation", value: "data.annotation" },
-      ],
-      total: 0,
-    }
-  },
-  mounted() {
-    // Only fetch fields here, get_items is handled by the query watcher
-    if (!VUE_APP_DISPLAYED_FIELDS) this.get_fields()
-  },
-  watch: {
-    query: {
-      // immediate: true ensures get_items() is called when the component
-      // first loads, even when navigating from another route
-      immediate: true,
-      handler() {
-        this.get_items()
-      },
-      deep: true,
-    },
-  },
-  methods: {
-    image_src({ _id }) {
-      return `${VUE_APP_IMAGE_STORAGE_API_URL}/images/${_id}/image`
-    },
-    get_fields() {
-      this.axios
-        .get("/fields")
-        .then(({ data }) => {
-          this.fields = data
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
-    get_items() {
-      this.loading = true
-      this.items = []
-      const url = `/images`
-      const params = this.query
+interface DataTableOptions {
+  page: number;
+  itemsPerPage: number;
+  sortBy: Array<{ key: string; order: "asc" | "desc" }>;
+}
 
-      this.axios
-        .get(url, { params })
-        .then(({ data }) => {
-          this.items = data.items
-          this.total = data.total
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    handleQueryItemClick(event, i) {
-      const {
-        skip = 0,
-        limit = 50,
-        sort = "time",
-        order = 1,
-        ...rest
-      } = this.query
-      const indexInPage = i.index
-      const cursor = Number(skip) + Number(indexInPage)
-      this.$router.push({
-        name: "annotate",
-        params: { _id: event._id },
-        query: { ...rest, skip, limit, sort, order, cursor },
-      })
-    },
-  },
-  computed: {
-    query() {
-      return this.$route.query
-    },
-    tableOptions: {
-      get() {
-        const {
-          limit = 10,
-          sort = "time",
-          order = 1,
-          skip = 0,
-        } = this.$route.query
+const displayedFieldsEnv = runtimeEnv.VITE_DISPLAYED_FIELDS;
+const storageApiUrl = runtimeEnv.VITE_IMAGE_STORAGE_API_URL;
 
-        return {
-          itemsPerPage: Number(limit),
-          sortBy: [sort],
-          sortDesc: [order === "-1"],
-          page: skip / limit + 1,
-        }
-      },
-      set(newVal) {
-        const { itemsPerPage, page, sortBy, sortDesc } = newVal
-        const params = {
-          limit: String(itemsPerPage),
-          skip: String((page - 1) * itemsPerPage),
-          order: String(sortDesc[0] ? -1 : 1),
-          sort: sortBy[0],
-        }
-        const query = { ...this.$route.query, ...params }
+const route = useRoute();
+const router = useRouter();
 
-        // Preventing route duplicates
-        if (JSON.stringify(this.$route.query) !== JSON.stringify(query))
-          this.$router.replace({ query })
-      },
-    },
+const loading = ref(false);
+const items = ref<Item[]>([]);
+const fields = ref<string[]>([]);
+const total = ref(0);
+
+const tableItemsPerPage = computed(() => Number(route.query.limit) || 10);
+
+const headers = computed(() => [
+  { title: "Image", key: "image", sortable: false },
+  { title: "Time", key: "time" },
+  { title: "Annotation", key: "data.annotation", sortable: false },
+]);
+
+const query = computed<Record<string, any>>({
+  get() {
+    return route.query as Record<string, any>;
   },
+  set(val) {
+    const newQuery: Record<string, any> = {};
+
+    // prune empty values, like setQueryParams does
+    Object.entries(val || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        newQuery[key] = value;
+      }
+    });
+
+    const currentQuery = route.query as Record<string, any>;
+    if (JSON.stringify(currentQuery) === JSON.stringify(newQuery)) return;
+
+    router.replace({ query: newQuery });
+  },
+});
+
+watch(query, () => getItems(), { deep: true, immediate: true });
+
+onMounted(() => {
+  if (!displayedFieldsEnv) getFields();
+  if (!route.query.limit) {
+    router.replace({
+      query: { ...route.query, limit: "10", skip: "0" },
+    });
+  }
+});
+
+function imageSrc(item: Item) {
+  return `${storageApiUrl}/images/${item._id}/image`;
+}
+
+function getItems() {
+  loading.value = true;
+  axios
+    .get("/images", { params: query.value })
+    .then(({ data }) => {
+      items.value = data.items;
+      total.value = data.total;
+    })
+    .catch(console.error)
+    .finally(() => {
+      loading.value = false;
+    });
+}
+
+function getFields() {
+  axios
+    .get("/fields")
+    .then(({ data }) => {
+      fields.value = data;
+    })
+    .catch(console.error);
+}
+
+function handleOptionsUpdate(options: DataTableOptions) {
+  const { page, sortBy } = options;
+  const limit = tableItemsPerPage.value;
+  const sort = sortBy[0]?.key ?? "time";
+  const order = sortBy[0]?.order === "desc" ? "-1" : "1";
+  const newQuery = {
+    ...route.query,
+    limit: String(limit),
+    skip: String((page - 1) * limit),
+    sort,
+    order,
+  };
+  if (JSON.stringify(route.query) !== JSON.stringify(newQuery))
+    router.replace({ query: newQuery });
+}
+
+function handleRowClick(
+  _event: MouseEvent,
+  row: { item: Item; index: number },
+) {
+  const {
+    skip = 0,
+    limit = 50,
+    sort = "time",
+    order = 1,
+    ...rest
+  } = query.value;
+  const cursor = Number(skip) + Number(row.index);
+  router.push({
+    name: "annotate",
+    params: { _id: row.item._id },
+    query: { ...rest, skip, limit, sort, order, cursor },
+  });
 }
 </script>
