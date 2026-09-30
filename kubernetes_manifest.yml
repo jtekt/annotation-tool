@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: annotation-tool
+  name: annotation-tool-legacy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: annotation-tool
+      app: annotation-tool-legacy
   template:
     metadata:
       labels:
-        app: annotation-tool
+        app: annotation-tool-legacy
     spec:
       containers:
-        - name: annotation-tool
+        - name: annotation-tool-legacy
           image: ${CONTAINER_IMAGE_TAGGED}
           env:
             - name: VUE_APP_IMAGE_STORAGE_API_URL
@@ -25,11 +25,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: annotation-tool
+  name: annotation-tool-legacy
 spec:
   ports:
     - port: 80
-      nodePort: 30443
+      nodePort: 30442 #NOTE: Change to 30443 after testing
   selector:
-    app: annotation-tool
+    app: annotation-tool-legacy
   type: NodePort
