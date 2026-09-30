@@ -54,10 +54,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAppStore } from '@/store'
+import runtimeEnv from '@/runtimeEnv'
 
 const store = useAppStore()
 
-const disabled = !!import.meta.env.VITE_PREVENT_LABELS_EDIT
+const disabled = !!runtimeEnv.VITE_PREVENT_LABELS_EDIT
 const labels = ref<string[]>([...(store.labels ?? [])])
 
 const snackbar = ref({ show: false, text: '', color: 'success' })

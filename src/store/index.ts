@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import runtimeEnv from '@/runtimeEnv'
 
 const defaultLabels = ['OK', 'NG']
 
@@ -8,8 +9,8 @@ export const useAppStore = defineStore('app', {
     }),
     actions: {
         loadLabels() {
-            const preventEdit = import.meta.env.VITE_PREVENT_LABELS_EDIT
-            const envLabels = import.meta.env.VITE_LABELS
+            const preventEdit = runtimeEnv.VITE_PREVENT_LABELS_EDIT
+            const envLabels = runtimeEnv.VITE_LABELS
 
             if (preventEdit) {
                 this.labels = envLabels ? envLabels.split(',') : defaultLabels

@@ -23,6 +23,7 @@
 import { ref, onMounted } from 'vue'
 import axios from '@/axios'
 import pjson from '../../package.json'
+import runtimeEnv from '@/runtimeEnv'
 
 interface Service {
     name: string
@@ -38,7 +39,7 @@ const headers = [
 
 const services = ref<Service[]>([
     { name: 'Annotation tool', url: window.location.origin, version: pjson.version },
-    { name: 'Image storage Back-end', url: import.meta.env.VITE_IMAGE_STORAGE_API_URL, version: null },
+    { name: 'Image storage Back-end', url: runtimeEnv.VITE_IMAGE_STORAGE_API_URL, version: null },
 ])
 
 onMounted(() => {

@@ -49,8 +49,7 @@ import AppTemplate from "./components/AppTemplate.vue";
 import LocaleSelector from "./components/LocaleSelector.vue";
 import NavCategories from "./components/NavCategories.vue";
 import { useAppStore } from "./store";
-import jtektLogoNegative from "@/assets/jtekt_logo_negative.jpg";
-import jtektLogo from "@/assets/jtekt_logo.jpg";
+import runtimeEnv from "@/runtimeEnv";
 
 const store = useAppStore();
 const route = useRoute();
@@ -59,17 +58,17 @@ const cameraAvailable = ref(false);
 
 const options = {
   title: "Annotation tool",
-  login_url: import.meta.env.VITE_LOGIN_URL,
-  identification_url: import.meta.env.VITE_IDENTIFICATION_URL,
+  login_url: runtimeEnv.VITE_LOGIN_URL,
+  identification_url: runtimeEnv.VITE_IDENTIFICATION_URL,
   oidc: {
-    authority: import.meta.env.VITE_OIDC_AUTHORITY,
-    client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+    authority: runtimeEnv.VITE_OIDC_AUTHORITY,
+    client_id: runtimeEnv.VITE_OIDC_CLIENT_ID,
     extraQueryParams: {
-      audience: import.meta.env.VITE_OIDC_AUDIENCE,
+      audience: runtimeEnv.VITE_OIDC_AUDIENCE,
     },
   },
-  header_logo: jtektLogoNegative,
-  authentication_logo: jtektLogo,
+  header_logo: "/jtekt_logo_negative.jpg",
+  authentication_logo: "/jtekt_logo.jpg",
   colors: { app_bar: "#000" },
   author: "Maxime Moreillon, JTEKT Corporation",
 };

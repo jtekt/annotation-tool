@@ -68,6 +68,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "@/axios";
 import { useAppStore } from "@/store";
+import runtimeEnv from "@/runtimeEnv";
 
 interface AnnotationItem {
   _id: string;
@@ -75,7 +76,7 @@ interface AnnotationItem {
   data: { annotation: string | null; [key: string]: unknown };
 }
 
-const storageApiUrl = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
+const storageApiUrl = runtimeEnv.VITE_IMAGE_STORAGE_API_URL;
 
 const route = useRoute();
 const router = useRouter();

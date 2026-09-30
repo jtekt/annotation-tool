@@ -40,6 +40,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "@/axios";
+import runtimeEnv from "@/runtimeEnv";
 
 interface Item {
   _id: string;
@@ -54,8 +55,8 @@ interface DataTableOptions {
   sortBy: Array<{ key: string; order: "asc" | "desc" }>;
 }
 
-const displayedFieldsEnv = import.meta.env.VITE_DISPLAYED_FIELDS;
-const storageApiUrl = import.meta.env.VITE_IMAGE_STORAGE_API_URL;
+const displayedFieldsEnv = runtimeEnv.VITE_DISPLAYED_FIELDS;
+const storageApiUrl = runtimeEnv.VITE_IMAGE_STORAGE_API_URL;
 
 const route = useRoute();
 const router = useRouter();
